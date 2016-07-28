@@ -14,7 +14,7 @@ namespace HostsManageTool
         /// </summary>
         /// <param name="hosts"></param>
         /// <returns></returns>
-        public int InsertUserHosts(UserHosts hosts)
+        public static int InsertUserHosts(UserHosts hosts)
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace HostsManageTool
         /// </summary>
         /// <param name="hostsList"></param>
         /// <returns></returns>
-        public int InsertUserHostsList(List<UserHosts> hostsList)
+        public static int InsertUserHostsList(List<UserHosts> hostsList)
         {
             throw new NotImplementedException();
         }
@@ -36,7 +36,7 @@ namespace HostsManageTool
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public int DeleteUserHosts(int id)
+        public static int DeleteUserHosts(int id)
         {
             throw new NotImplementedException();
         }
@@ -46,22 +46,32 @@ namespace HostsManageTool
         /// </summary>
         /// <param name="hostName"></param>
         /// <returns></returns>
-        public List<UserHosts> FindHostsListByHostName(string hostName)
+        public static List<UserHosts> FindHostsListByHostName(string hostName)
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// 获取所有用户Hosts
+        /// </summary>
+        /// <returns></returns>
+        public static List<UserHosts> GetAllHosts()
+        {
+            throw new NotImplementedException();
+        }
+
 
         /// <summary>
         /// 将一条hosts设置为使用中
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public int SetHostsInUse(int id)
+        public static int SetHostsInUse(int id)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserHosts> DownloadHosts(string url)
+        public static List<UserHosts> DownloadHosts(string url)
         {
             throw new NotImplementedException();
         }
