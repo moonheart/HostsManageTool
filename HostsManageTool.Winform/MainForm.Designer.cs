@@ -19,6 +19,7 @@
             }
             base.Dispose(disposing);
         }
+        
 
         #region Windows 窗体设计器生成的代码
 
@@ -32,20 +33,19 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtHostNameFilter = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnAddHostName = new System.Windows.Forms.Button();
-            this.btnDeleteHostName = new System.Windows.Forms.Button();
             this.lstIp = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnAddIp = new System.Windows.Forms.Button();
-            this.btnDeleteIp = new System.Windows.Forms.Button();
-            this.btnDisableAllIp = new System.Windows.Forms.Button();
             this.txtIpFilter = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.btnClearHostName = new System.Windows.Forms.Button();
-            this.btnClearIp = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.txtCurrent = new System.Windows.Forms.TextBox();
-            this.btnDirect = new System.Windows.Forms.Button();
+            this.btnDirect = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnDeleteIp = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnAddIp = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnDeleteHostName = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnClearIp = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnClearHostName = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnAddHostName = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.SuspendLayout();
             // 
             // lstHostName
@@ -74,6 +74,7 @@
             this.txtHostNameFilter.Name = "txtHostNameFilter";
             this.txtHostNameFilter.Size = new System.Drawing.Size(166, 21);
             this.txtHostNameFilter.TabIndex = 2;
+            this.txtHostNameFilter.TextChanged += new System.EventHandler(this.txtHostNameFilter_TextChanged);
             // 
             // label2
             // 
@@ -83,25 +84,6 @@
             this.label2.Size = new System.Drawing.Size(161, 12);
             this.label2.TabIndex = 3;
             this.label2.Text = "输入主机名快速过滤或添加：";
-            // 
-            // btnAddHostName
-            // 
-            this.btnAddHostName.Location = new System.Drawing.Point(229, 82);
-            this.btnAddHostName.Name = "btnAddHostName";
-            this.btnAddHostName.Size = new System.Drawing.Size(39, 23);
-            this.btnAddHostName.TabIndex = 4;
-            this.btnAddHostName.Text = "添加";
-            this.btnAddHostName.UseVisualStyleBackColor = true;
-            this.btnAddHostName.Click += new System.EventHandler(this.btnAddHostName_Click);
-            // 
-            // btnDeleteHostName
-            // 
-            this.btnDeleteHostName.Location = new System.Drawing.Point(229, 111);
-            this.btnDeleteHostName.Name = "btnDeleteHostName";
-            this.btnDeleteHostName.Size = new System.Drawing.Size(39, 23);
-            this.btnDeleteHostName.TabIndex = 4;
-            this.btnDeleteHostName.Text = "删除";
-            this.btnDeleteHostName.UseVisualStyleBackColor = true;
             // 
             // lstIp
             // 
@@ -122,34 +104,6 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "指向Ip列表";
             // 
-            // btnAddIp
-            // 
-            this.btnAddIp.Location = new System.Drawing.Point(430, 126);
-            this.btnAddIp.Name = "btnAddIp";
-            this.btnAddIp.Size = new System.Drawing.Size(39, 23);
-            this.btnAddIp.TabIndex = 4;
-            this.btnAddIp.Text = "添加";
-            this.btnAddIp.UseVisualStyleBackColor = true;
-            this.btnAddIp.Click += new System.EventHandler(this.btnAddIp_Click);
-            // 
-            // btnDeleteIp
-            // 
-            this.btnDeleteIp.Location = new System.Drawing.Point(430, 155);
-            this.btnDeleteIp.Name = "btnDeleteIp";
-            this.btnDeleteIp.Size = new System.Drawing.Size(39, 23);
-            this.btnDeleteIp.TabIndex = 4;
-            this.btnDeleteIp.Text = "删除";
-            this.btnDeleteIp.UseVisualStyleBackColor = true;
-            // 
-            // btnDisableAllIp
-            // 
-            this.btnDisableAllIp.Location = new System.Drawing.Point(430, 184);
-            this.btnDisableAllIp.Name = "btnDisableAllIp";
-            this.btnDisableAllIp.Size = new System.Drawing.Size(39, 23);
-            this.btnDisableAllIp.TabIndex = 4;
-            this.btnDisableAllIp.Text = "禁用";
-            this.btnDisableAllIp.UseVisualStyleBackColor = true;
-            // 
             // txtIpFilter
             // 
             this.txtIpFilter.Location = new System.Drawing.Point(272, 99);
@@ -165,26 +119,6 @@
             this.label4.Size = new System.Drawing.Size(137, 12);
             this.label4.TabIndex = 3;
             this.label4.Text = "输入Ip快速过滤或添加：";
-            // 
-            // btnClearHostName
-            // 
-            this.btnClearHostName.Location = new System.Drawing.Point(184, 55);
-            this.btnClearHostName.Name = "btnClearHostName";
-            this.btnClearHostName.Size = new System.Drawing.Size(39, 23);
-            this.btnClearHostName.TabIndex = 4;
-            this.btnClearHostName.Text = "清空";
-            this.btnClearHostName.UseVisualStyleBackColor = true;
-            this.btnClearHostName.Click += new System.EventHandler(this.btnClearHostName_Click);
-            // 
-            // btnClearIp
-            // 
-            this.btnClearIp.Location = new System.Drawing.Point(385, 97);
-            this.btnClearIp.Name = "btnClearIp";
-            this.btnClearIp.Size = new System.Drawing.Size(39, 23);
-            this.btnClearIp.TabIndex = 4;
-            this.btnClearIp.Text = "清空";
-            this.btnClearIp.UseVisualStyleBackColor = true;
-            this.btnClearIp.Click += new System.EventHandler(this.btnClearIp_Click);
             // 
             // label5
             // 
@@ -214,6 +148,66 @@
             this.btnDirect.UseVisualStyleBackColor = true;
             this.btnDirect.Click += new System.EventHandler(this.btnDirect_Click);
             // 
+            // btnDeleteIp
+            // 
+            this.btnDeleteIp.Location = new System.Drawing.Point(430, 155);
+            this.btnDeleteIp.Name = "btnDeleteIp";
+            this.btnDeleteIp.Size = new System.Drawing.Size(39, 23);
+            this.btnDeleteIp.TabIndex = 4;
+            this.btnDeleteIp.Text = "删除";
+            this.btnDeleteIp.UseVisualStyleBackColor = true;
+            this.btnDeleteIp.Click += new System.EventHandler(this.btnDeleteIp_Click);
+            // 
+            // btnAddIp
+            // 
+            this.btnAddIp.Location = new System.Drawing.Point(430, 126);
+            this.btnAddIp.Name = "btnAddIp";
+            this.btnAddIp.Size = new System.Drawing.Size(39, 23);
+            this.btnAddIp.TabIndex = 4;
+            this.btnAddIp.Text = "添加";
+            this.btnAddIp.UseVisualStyleBackColor = true;
+            this.btnAddIp.Click += new System.EventHandler(this.btnAddIp_Click);
+            // 
+            // btnDeleteHostName
+            // 
+            this.btnDeleteHostName.Location = new System.Drawing.Point(229, 111);
+            this.btnDeleteHostName.Name = "btnDeleteHostName";
+            this.btnDeleteHostName.Size = new System.Drawing.Size(39, 23);
+            this.btnDeleteHostName.TabIndex = 4;
+            this.btnDeleteHostName.Text = "删除";
+            this.btnDeleteHostName.UseVisualStyleBackColor = true;
+            this.btnDeleteHostName.Click += new System.EventHandler(this.btnDeleteHostName_Click);
+            // 
+            // btnClearIp
+            // 
+            this.btnClearIp.Location = new System.Drawing.Point(385, 97);
+            this.btnClearIp.Name = "btnClearIp";
+            this.btnClearIp.Size = new System.Drawing.Size(39, 23);
+            this.btnClearIp.TabIndex = 4;
+            this.btnClearIp.Text = "清空";
+            this.btnClearIp.UseVisualStyleBackColor = true;
+            this.btnClearIp.Click += new System.EventHandler(this.btnClearIp_Click);
+            // 
+            // btnClearHostName
+            // 
+            this.btnClearHostName.Location = new System.Drawing.Point(184, 55);
+            this.btnClearHostName.Name = "btnClearHostName";
+            this.btnClearHostName.Size = new System.Drawing.Size(39, 23);
+            this.btnClearHostName.TabIndex = 4;
+            this.btnClearHostName.Text = "清空";
+            this.btnClearHostName.UseVisualStyleBackColor = true;
+            this.btnClearHostName.Click += new System.EventHandler(this.btnClearHostName_Click);
+            // 
+            // btnAddHostName
+            // 
+            this.btnAddHostName.Location = new System.Drawing.Point(229, 82);
+            this.btnAddHostName.Name = "btnAddHostName";
+            this.btnAddHostName.Size = new System.Drawing.Size(39, 23);
+            this.btnAddHostName.TabIndex = 4;
+            this.btnAddHostName.Text = "添加";
+            this.btnAddHostName.UseVisualStyleBackColor = true;
+            this.btnAddHostName.Click += new System.EventHandler(this.btnAddHostName_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -222,7 +216,6 @@
             this.Controls.Add(this.btnDirect);
             this.Controls.Add(this.txtCurrent);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.btnDisableAllIp);
             this.Controls.Add(this.btnDeleteIp);
             this.Controls.Add(this.btnAddIp);
             this.Controls.Add(this.btnDeleteHostName);
@@ -251,20 +244,19 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtHostNameFilter;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnAddHostName;
-        private System.Windows.Forms.Button btnDeleteHostName;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnAddHostName;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnDeleteHostName;
         private System.Windows.Forms.ListBox lstIp;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnAddIp;
-        private System.Windows.Forms.Button btnDeleteIp;
-        private System.Windows.Forms.Button btnDisableAllIp;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnAddIp;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnDeleteIp;
         private System.Windows.Forms.TextBox txtIpFilter;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button btnClearHostName;
-        private System.Windows.Forms.Button btnClearIp;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnClearHostName;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnClearIp;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtCurrent;
-        private System.Windows.Forms.Button btnDirect;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnDirect;
     }
 }
 

@@ -10,7 +10,6 @@ namespace HostsManageTool.Winform.Model
     {
         public int NameId { get; set; }
         public int IpId { get; set; }
-        public int IsEnabled { get; set; }
 
     }
 }
