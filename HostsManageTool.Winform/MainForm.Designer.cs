@@ -110,6 +110,8 @@
             this.txtIpFilter.Name = "txtIpFilter";
             this.txtIpFilter.Size = new System.Drawing.Size(107, 21);
             this.txtIpFilter.TabIndex = 2;
+            this.txtIpFilter.TextChanged += new System.EventHandler(this.txtIpFilter_TextChanged);
+            this.txtIpFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtIpFilter_KeyPress);
             // 
             // label4
             // 

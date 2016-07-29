@@ -357,5 +357,31 @@ namespace HostsManageTool.Winform
             SetHostNameBinding(_hostNamesSerch);
 
         }
+
+        private void txtIpFilter_TextChanged(object sender, EventArgs e)
+        {
+            var txt = txtIpFilter.Text.Trim();
+            _hostIpsSearch.Clear();
+            if (txt.IsNullOrWhiteSpace())
+            {
+                _hostIpsSearch.AddRange(_hostIps.OrderBy(d => d.IpAddress));
+            }
+            else
+            {
+                _hostIpsSearch.AddRange(_hostIps.Where(d => d.IpAddress.Contains(txt)));
+            }
+            SetHostIpBinding(_hostIpsSearch);
+        }
+
+        private void txtIpFilter_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar) && e.KeyChar != '.')
+            {
+                e.Handled = true;
+            }
+            else
+            {
+            }
+        }
     }
 }
