@@ -9,7 +9,7 @@ using HostsManageTool.Winform.Model;
 
 namespace HostsManageTool.Winform.Bll
 {
-    public class Manager
+    public class UserHostManager
     {
         private SQLiteHelper Helper
         {
@@ -21,9 +21,9 @@ namespace HostsManageTool.Winform.Bll
             }
         }
 
-        private static Manager _in = new Manager();
-        public static Manager Instance { get { return _in; } }
-        private Manager()
+        private static UserHostManager _in = new UserHostManager();
+        public static UserHostManager Instance { get { return _in; } }
+        private UserHostManager()
         {
 
         }

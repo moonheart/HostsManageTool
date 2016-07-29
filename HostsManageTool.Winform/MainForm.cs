@@ -42,7 +42,7 @@ namespace HostsManageTool.Winform
         /// </summary>
         private void LoadHostNameData(int selectedvalue = 0)
         {
-            var list = Manager.Instance.GetAllHostNames();
+            var list = UserHostManager.Instance.GetAllHostNames();
             if (list != null)
             {
                 _hostNames.Clear();
@@ -75,7 +75,7 @@ namespace HostsManageTool.Winform
         /// </summary>
         private void LoadHostIpData(int selectedvalue = 0)
         {
-            List<HostIp> list = Manager.Instance.GetAllHostIps();
+            List<HostIp> list = UserHostManager.Instance.GetAllHostIps();
             if (list != null)
             {
                 _hostIps.Clear();
@@ -122,7 +122,7 @@ namespace HostsManageTool.Winform
 
                 try
                 {
-                    var n = Manager.Instance.AddHostName(h);
+                    var n = UserHostManager.Instance.AddHostName(h);
                     if (n != null)
                     {
                         LoadHostNameData(n.Id);
@@ -162,7 +162,7 @@ namespace HostsManageTool.Winform
             if (name == null)
                 return;
 
-            var hostip = Manager.Instance.FindRedirectByHostName(name);
+            var hostip = UserHostManager.Instance.FindRedirectByHostName(name);
             if (hostip != null)
             {
                 txtCurrent.Text = hostip.IpAddress;
@@ -190,7 +190,7 @@ namespace HostsManageTool.Winform
                     {
                         if (hostname == null)
                         {
-                            var hostip = Manager.Instance.AddHostIp(new HostIp() { IpAddress = ip });
+                            var hostip = UserHostManager.Instance.AddHostIp(new HostIp() { IpAddress = ip });
                             if (hostip != null)
                             {
                                 LoadHostIpData(hostip.Id);
@@ -202,11 +202,11 @@ namespace HostsManageTool.Winform
                         }
                         else
                         {
-                            var n = Manager.Instance.AddHostIpToHostName(hostname, ip);
+                            var n = UserHostManager.Instance.AddHostIpToHostName(hostname, ip);
                             if (n > 0)
                             {
                                 LoadHostNameData(hostname.Id);
-                                var iip = Manager.Instance.FindRedirectByHostName(hostname);
+                                var iip = UserHostManager.Instance.FindRedirectByHostName(hostname);
                                 LoadHostIpData(iip.Id);
                             }
                             else
@@ -270,7 +270,7 @@ namespace HostsManageTool.Winform
                 }
                 else
                 {
-                    var n = Manager.Instance.AddHostDirect(hostname, hostip);
+                    var n = UserHostManager.Instance.AddHostDirect(hostname, hostip);
                     if (n > 0)
                     {
                         LoadHostNameData(hostname.Id);
@@ -287,7 +287,7 @@ namespace HostsManageTool.Winform
                 var hostname = lstHostName.SelectedItem as HostName;
                 if (hostname != null)
                 {
-                    Manager.Instance.RemoveHostDirect(hostname);
+                    UserHostManager.Instance.RemoveHostDirect(hostname);
                     LoadHostNameData(hostname.Id);
                 }
                 else
@@ -323,7 +323,7 @@ namespace HostsManageTool.Winform
             var hostname = lstHostName.SelectedItem as HostName;
             if (hostname != null)
             {
-                var n = Manager.Instance.RemoveHostName(hostname);
+                var n = UserHostManager.Instance.RemoveHostName(hostname);
                 if (n == 0)
                 {
                     Message("移除失败");
@@ -378,9 +378,6 @@ namespace HostsManageTool.Winform
             if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar) && e.KeyChar != '.')
             {
                 e.Handled = true;
-            }
-            else
-            {
             }
         }
     }

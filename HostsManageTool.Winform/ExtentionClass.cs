@@ -24,9 +24,12 @@ namespace HostsManageTool.Winform
                 {
                     throw new Exception("连接字符串未配置");
                 }
-                return conn;
+                var path = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+                return string.Format(conn, path);
             }
         }
+
+        
 
         /// <summary>
         /// 获取SqliteHelper
