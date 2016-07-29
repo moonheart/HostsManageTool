@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HostsManageTool.Winform.Model;
 
-namespace HostsManageTool
+namespace HostsManageTool.Winform
 {
     public class HostsSourceManager
     {

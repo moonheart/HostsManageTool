@@ -43,6 +43,9 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnClearHostName = new System.Windows.Forms.Button();
             this.btnClearIp = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtCurrent = new System.Windows.Forms.TextBox();
+            this.btnDirect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lstHostName
@@ -53,6 +56,7 @@
             this.lstHostName.Name = "lstHostName";
             this.lstHostName.Size = new System.Drawing.Size(211, 376);
             this.lstHostName.TabIndex = 0;
+            this.lstHostName.SelectedIndexChanged += new System.EventHandler(this.lstHostName_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -103,9 +107,9 @@
             // 
             this.lstIp.FormattingEnabled = true;
             this.lstIp.ItemHeight = 12;
-            this.lstIp.Location = new System.Drawing.Point(274, 82);
+            this.lstIp.Location = new System.Drawing.Point(272, 126);
             this.lstIp.Name = "lstIp";
-            this.lstIp.Size = new System.Drawing.Size(152, 376);
+            this.lstIp.Size = new System.Drawing.Size(152, 328);
             this.lstIp.TabIndex = 0;
             // 
             // label3
@@ -120,16 +124,17 @@
             // 
             // btnAddIp
             // 
-            this.btnAddIp.Location = new System.Drawing.Point(432, 82);
+            this.btnAddIp.Location = new System.Drawing.Point(430, 126);
             this.btnAddIp.Name = "btnAddIp";
             this.btnAddIp.Size = new System.Drawing.Size(39, 23);
             this.btnAddIp.TabIndex = 4;
             this.btnAddIp.Text = "添加";
             this.btnAddIp.UseVisualStyleBackColor = true;
+            this.btnAddIp.Click += new System.EventHandler(this.btnAddIp_Click);
             // 
             // btnDeleteIp
             // 
-            this.btnDeleteIp.Location = new System.Drawing.Point(432, 111);
+            this.btnDeleteIp.Location = new System.Drawing.Point(430, 155);
             this.btnDeleteIp.Name = "btnDeleteIp";
             this.btnDeleteIp.Size = new System.Drawing.Size(39, 23);
             this.btnDeleteIp.TabIndex = 4;
@@ -138,7 +143,7 @@
             // 
             // btnDisableAllIp
             // 
-            this.btnDisableAllIp.Location = new System.Drawing.Point(432, 140);
+            this.btnDisableAllIp.Location = new System.Drawing.Point(430, 184);
             this.btnDisableAllIp.Name = "btnDisableAllIp";
             this.btnDisableAllIp.Size = new System.Drawing.Size(39, 23);
             this.btnDisableAllIp.TabIndex = 4;
@@ -147,7 +152,7 @@
             // 
             // txtIpFilter
             // 
-            this.txtIpFilter.Location = new System.Drawing.Point(274, 55);
+            this.txtIpFilter.Location = new System.Drawing.Point(272, 99);
             this.txtIpFilter.Name = "txtIpFilter";
             this.txtIpFilter.Size = new System.Drawing.Size(107, 21);
             this.txtIpFilter.TabIndex = 2;
@@ -155,7 +160,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(276, 40);
+            this.label4.Location = new System.Drawing.Point(274, 84);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(137, 12);
             this.label4.TabIndex = 3;
@@ -169,21 +174,54 @@
             this.btnClearHostName.TabIndex = 4;
             this.btnClearHostName.Text = "清空";
             this.btnClearHostName.UseVisualStyleBackColor = true;
+            this.btnClearHostName.Click += new System.EventHandler(this.btnClearHostName_Click);
             // 
             // btnClearIp
             // 
-            this.btnClearIp.Location = new System.Drawing.Point(387, 53);
+            this.btnClearIp.Location = new System.Drawing.Point(385, 97);
             this.btnClearIp.Name = "btnClearIp";
             this.btnClearIp.Size = new System.Drawing.Size(39, 23);
             this.btnClearIp.TabIndex = 4;
             this.btnClearIp.Text = "清空";
             this.btnClearIp.UseVisualStyleBackColor = true;
+            this.btnClearIp.Click += new System.EventHandler(this.btnClearIp_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(276, 42);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "当前指向：";
+            // 
+            // txtCurrent
+            // 
+            this.txtCurrent.Location = new System.Drawing.Point(274, 55);
+            this.txtCurrent.Name = "txtCurrent";
+            this.txtCurrent.ReadOnly = true;
+            this.txtCurrent.Size = new System.Drawing.Size(107, 21);
+            this.txtCurrent.TabIndex = 6;
+            this.txtCurrent.TextChanged += new System.EventHandler(this.txtCurrent_TextChanged);
+            // 
+            // btnDirect
+            // 
+            this.btnDirect.Location = new System.Drawing.Point(385, 53);
+            this.btnDirect.Name = "btnDirect";
+            this.btnDirect.Size = new System.Drawing.Size(75, 23);
+            this.btnDirect.TabIndex = 7;
+            this.btnDirect.Text = "指向选中Ip";
+            this.btnDirect.UseVisualStyleBackColor = true;
+            this.btnDirect.Click += new System.EventHandler(this.btnDirect_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(894, 480);
+            this.Controls.Add(this.btnDirect);
+            this.Controls.Add(this.txtCurrent);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.btnDisableAllIp);
             this.Controls.Add(this.btnDeleteIp);
             this.Controls.Add(this.btnAddIp);
@@ -224,6 +262,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnClearHostName;
         private System.Windows.Forms.Button btnClearIp;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtCurrent;
+        private System.Windows.Forms.Button btnDirect;
     }
 }
 

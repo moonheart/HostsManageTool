@@ -7,12 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HostsManageTool.Winform.Bll;
+using HostsManageTool.Winform.Model;
 
 namespace HostsManageTool.Winform
 {
     public partial class MainForm : Form
     {
-        private List<UserHosts> UserHostsList;
 
 
         public MainForm()
@@ -27,18 +28,21 @@ namespace HostsManageTool.Winform
         /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            LoadData();
+            LoadHostNameData();
+            LoadHostIpData();
         }
 
-        private void LoadData()
+        /// <summary>
+        /// 加载主机名列表
+        /// </summary>
+        private void LoadHostNameData()
         {
-            UserHostsList = UserHostsManager.GetAllHosts();
-            if (UserHostsList != null)
+            var list = Manager.Instance.GetAllHostNames();
+            if (list != null)
             {
-                if (UserHostsList.Count > 0)
-                {
-                    var list = UserHostsList.GroupBy((hosts => hosts.HostsName)).Select(d => new { d.Key }).ToList();
-                }
+                lstHostName.DataSource = list;
+                lstHostName.DisplayMember = "Name";
+                lstHostName.ValueMember = "Id";
             }
             else
             {
@@ -46,11 +50,34 @@ namespace HostsManageTool.Winform
             }
         }
 
+        /// <summary>
+        /// 加载Ip列表
+        /// </summary>
+        private void LoadHostIpData()
+        {
+            List<HostIp> list = Manager.Instance.GetAllHostIps();
+            if (list != null)
+            {
+                lstIp.DataSource = list;
+                lstIp.DisplayMember = "IpAddress";
+                lstIp.ValueMember = "Id";
+            }
+        }
+
+        /// <summary>
+        /// 弹出消息框
+        /// </summary>
+        /// <param name="message"></param>
         private void Message(string message)
         {
             MessageBox.Show(message);
         }
 
+        /// <summary>
+        /// 添加主机名点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnAddHostName_Click(object sender, EventArgs e)
         {
             var name = txtHostNameFilter.Text.Trim();
@@ -58,17 +85,161 @@ namespace HostsManageTool.Winform
             {
                 return;
             }
-            var h = new UserHosts();
-            h.HostsName = name;
+            var h = new HostName();
+            h.Name = name;
 
-            var n = UserHostsManager.InsertUserHosts(h);
-            if (n > 0)
+            try
             {
-                LoadData();
+                var n = Manager.Instance.AddHostName(h);
+                if (n > 0)
+                {
+                    LoadHostNameData();
+                }
+                else
+                {
+                    Message("添加出错");
+                }
+            }
+            catch (Exception ex)
+            {
+                Message(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// 主机名列表选择改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lstHostName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var name = lstHostName.SelectedItem as HostName;
+            if (name == null)
+                return;
+
+            //var list = Manager.Instance.FindHostIpListByHostName(name);
+            //if (list == null)
+            //    return;
+
+            //LoadHostIpData(list);
+            var hostip = Manager.Instance.FindEnabledForHostName(name);
+            if (hostip != null)
+            {
+                txtCurrent.Text = hostip.IpAddress;
             }
             else
             {
-                Message("添加出错");
+                txtCurrent.Text = "";
+            }
+        }
+
+        /// <summary>
+        /// Ip列表改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnAddIp_Click(object sender, EventArgs e)
+        {
+            var ip = txtIpFilter.Text.Trim();
+            if (ip.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+            if (!ip.IsIpAddress())
+            {
+                Message("请输入正确的Ip地址");
+                return;
+            }
+
+            var hostname = lstHostName.SelectedItem as HostName;
+            //if (hostname == null)
+            //{
+            //    Message("请选择需要指向的主机名");
+            //    return;
+            //}
+
+            try
+            {
+                if (hostname == null)
+                {
+                    var hostip = Manager.Instance.AddHostIp(new HostIp() { IpAddress = ip });
+                    if (hostip != null)
+                    {
+                        LoadHostIpData();
+                    }
+                    else
+                    {
+                        Message("添加失败");
+                    }
+                }
+                else
+                {
+                    var n = Manager.Instance.AddHostIpToHostName(hostname, ip);
+                    if (n > 0)
+                    {
+                        LoadHostNameData();
+                    }
+                    else
+                    {
+                        Message("添加指向失败");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Message(ex.Message);
+            }
+        }
+
+        private void btnClearHostName_Click(object sender, EventArgs e)
+        {
+            txtHostNameFilter.Clear();
+        }
+
+        private void btnClearIp_Click(object sender, EventArgs e)
+        {
+            txtIpFilter.Clear();
+        }
+
+        private void btnDirect_Click(object sender, EventArgs e)
+        {
+            var curr = txtCurrent.Text.Trim();
+            if (curr.IsNullOrWhiteSpace())
+            {
+                //添加指向
+                var hostip = lstIp.SelectedItem as HostIp;
+                var hostname = lstHostName.SelectedItem as HostName;
+                if (hostip != null && hostname != null)
+                {
+                    var n = Manager.Instance.AddHostToIp(hostname, hostip);
+                    if (n > 0)
+                    {
+                        LoadHostNameData();
+                    }
+                    else
+                    {
+                        Message("添加失败");
+                    }
+                }
+            }
+            else
+            {
+                // todo 取消指向
+
+            }
+        }
+
+        private void txtCurrent_TextChanged(object sender, EventArgs e)
+        {
+            var curr = txtCurrent.Text.Trim();
+            if (curr.IsNullOrWhiteSpace())
+            {
+                btnDirect.Text = "指向选中Ip";
+            }
+            else
+            {
+                btnDirect.Text = "取消指向Ip";
             }
         }
     }

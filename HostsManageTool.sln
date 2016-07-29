@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostsManageTool.Winform", "HostsManageTool.Winform\HostsManageTool.Winform.csproj", "{91A7D8D6-7027-41A0-8E9E-537446E3A6C5}"
 EndProject

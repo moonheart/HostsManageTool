@@ -19,7 +19,7 @@ namespace HostsManageTool
         /// <summary>
         /// 主机名
         /// </summary>
-        public string HostsName { get; set; }
+        public string HostName { get; set; }
 
         /// <summary>
         /// Ip地址
