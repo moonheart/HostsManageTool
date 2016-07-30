@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -29,8 +31,6 @@ namespace HostsManageTool.Winform
             }
         }
 
-        
-
         /// <summary>
         /// 获取SqliteHelper
         /// </summary>
@@ -50,31 +50,54 @@ namespace HostsManageTool.Winform
                 @"((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))");
         }
 
-
-        //public static UserHosts DataRowToUserHosts(DataRow row)
-        //{
-        //    var hosts = new UserHosts();
-        //    hosts.Id = int.Parse(row["Id"] + "");
-        //    hosts.HostName = row["HostName"] + "";
-        //    hosts.Ip = row["Ip"] + "";
-        //    hosts.IsInUse = int.Parse(row["IsInUse"] + "");
-        //    return hosts;
-        //}
-
-        //public static HostsSource DataRowToHostsSource(DataRow row)
-        //{
-        //    var source = new HostsSource();
-        //    source.Id = int.Parse(row["Id"] + "");
-        //    source.Name = row["Name"] + "";
-        //    source.Url = row["Url"] + "";
-        //    source.IsEnabled = int.Parse(row["IsEnabled"] + "");
-        //    return source;
-        //}
+        public static char[] IpStartStrings = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 
         public static bool IsNullOrWhiteSpace(this string s)
         {
             return string.IsNullOrWhiteSpace(s);
+        }
+
+        /// <summary>
+        /// 现在远程hosts到字符串数组
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> DownloaHosts(string url)
+        {
+            if (url.IsNullOrWhiteSpace())
+                return null;
+
+            var request = (HttpWebRequest)WebRequest.Create(url);
+
+            Stream rs;
+            using (var response = request.GetResponse())
+            {
+                rs = response.GetResponseStream();
+                if (rs != null)
+                {
+                    string str;
+                    using (var sr = new StreamReader(rs))
+                    {
+                        str = sr.ReadToEnd();
+                    }
+                    var list = str.Split('\n').Where(d => !d.IsNullOrWhiteSpace() && IpStartStrings.Contains(d[0])).ToList();
+                    if (list.Count > 0)
+                    {
+                        var dic = new Dictionary<string, string>();
+
+                        foreach (string s in list)
+                        {
+                            var ss = s.Trim().Replace("\t", " ").Split(' ');
+                            if (!dic.ContainsKey(ss.Last()))
+                                dic.Add(ss.Last(), ss.First());
+                        }
+                        return dic;
+                    }
+                    return null;
+                }
+            }
+            return null;
         }
     }
 }
