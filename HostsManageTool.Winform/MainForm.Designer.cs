@@ -372,7 +372,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(894, 480);
+            this.ClientSize = new System.Drawing.Size(817, 480);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.btnApplyOnlyUser);
             this.Controls.Add(this.btnApplyToHosts);
@@ -404,6 +404,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lstIp);
             this.Controls.Add(this.lstHostName);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Hosts管理";
