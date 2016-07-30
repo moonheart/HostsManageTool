@@ -852,5 +852,15 @@ namespace HostsManageTool.Winform
             { IsBackground = true }
             .Start();
         }
+
+
+        private void lstSource_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = lstSource.IndexFromPoint(e.Location);
+            if (index != ListBox.NoMatches)
+            {
+                btnEditSource_Click(null, null);
+            }
+        }
     }
 }

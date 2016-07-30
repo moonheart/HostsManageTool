@@ -168,6 +168,7 @@
             this.lstSource.TabIndex = 8;
             this.lstSource.SelectedIndexChanged += new System.EventHandler(this.lstSource_SelectedIndexChanged);
             this.lstSource.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstSource_KeyDown);
+            this.lstSource.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstSource_MouseDoubleClick);
             // 
             // label6
             // 
