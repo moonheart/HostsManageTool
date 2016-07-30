@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HostsManageTool.Winform.Bll;
@@ -35,20 +37,29 @@ namespace HostsManageTool.Winform
         /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            LoadHostNameData();
-            LoadHostIpData();
-            LoadHostSource();
+            try
+            {
+                LoadHostNameData();
+                LoadHostIpData();
+                LoadHostSource();
+            }
+            catch (Exception ex)
+            {
+                Message(ex.Message);
+                Message(ex.StackTrace);
+                Application.Exit();
+            }
         }
 
 
         private void LoadHostSource(int selectedvalue = 0)
         {
-            var list = HostsSourceManager.Instance.GetHostsSourceList();
+            var list = HostsSourceManager.Instance.GetAllHostsSource();
             if (list != null)
             {
 
                 _hostsSources.Clear();
-                _hostsSources.AddRange(list.OrderBy(d => d.Order));
+                _hostsSources.AddRange(list.OrderBy(d => d.Id));
                 SetSourceBinding(_hostsSources);
                 lstSource.SelectedValue = selectedvalue;
             }
@@ -351,14 +362,19 @@ namespace HostsManageTool.Winform
             var hostname = lstHostName.SelectedItem as HostName;
             if (hostname != null)
             {
-                var n = UserHostManager.Instance.RemoveHostName(hostname);
-                if (n == 0)
+                if (MessageBox.Show("确认删除此条信息？删除后不可恢复！", "删除确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                    DialogResult.OK)
                 {
-                    Message("移除失败");
-                }
-                else
-                {
-                    LoadHostNameData();
+
+                    var n = UserHostManager.Instance.RemoveHostName(hostname);
+                    if (n == 0)
+                    {
+                        Message("移除失败");
+                    }
+                    else
+                    {
+                        LoadHostNameData();
+                    }
                 }
             }
             EnableControl(sender);
@@ -369,21 +385,26 @@ namespace HostsManageTool.Winform
             var ip = lstIp.SelectedItem as HostIp;
             if (ip != null)
             {
-                try
+                if (MessageBox.Show("确认删除此条信息？删除后不可恢复！", "删除确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                    DialogResult.OK)
                 {
-                    var n = UserHostManager.Instance.RemoveHostIp(ip.Id);
-                    if (n <= 0)
+                    try
                     {
-                        Message("删除失败");
+                        var n = UserHostManager.Instance.RemoveHostIp(ip.Id);
+                        if (n <= 0)
+                        {
+                            Message("删除失败");
+                        }
+                        else
+                        {
+                            LoadHostNameData();
+                            LoadHostIpData();
+                        }
                     }
-                    else
+                    catch (ItemNotFoundException)
                     {
-                        LoadHostIpData();
+                        Message("要删除的对象不存在");
                     }
-                }
-                catch (ItemNotFoundException)
-                {
-                    Message("要删除的对象不存在");
                 }
             }
             EnableControl(sender);
@@ -462,7 +483,7 @@ namespace HostsManageTool.Winform
 
                     break;
             }
-
+            lstSource.Focus();
             EnableControl(sender);
         }
 
@@ -471,18 +492,23 @@ namespace HostsManageTool.Winform
             var source = lstSource.SelectedItem as HostsSource;
             if (source != null)
             {
-                try
+                if (MessageBox.Show("确认删除此条信息？删除后不可恢复！", "删除确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                    DialogResult.OK)
                 {
-                    var n = HostsSourceManager.Instance.DeleteHostsSource(source.Id);
-                    if (n > 0)
+                    try
                     {
-                        LoadHostSource();
+                        var n = HostsSourceManager.Instance.DeleteHostsSource(source.Id);
+                        if (n > 0)
+                        {
+                            LoadHostSource();
+                        }
+                    }
+                    catch (ItemNotFoundException)
+                    {
+                        Message("要删除的项目不存在");
                     }
                 }
-                catch (ItemNotFoundException)
-                {
-                    Message("要删除的项目不存在");
-                }
+                lstSource.Focus();
             }
             EnableControl(sender);
         }
@@ -522,6 +548,7 @@ namespace HostsManageTool.Winform
                         break;
                 }
             }
+            lstSource.Focus();
             EnableControl(sender);
         }
 
@@ -553,6 +580,277 @@ namespace HostsManageTool.Winform
             {
                 btnDisableEnable.Text = s.IsEnabled == 1 ? "禁用" : "启用";
             }
+        }
+
+        private void ElementChange<T>(List<T> list, int index, int count)
+        {
+            if (index >= list.Count || index < 0)
+            {
+                return;
+            }
+            var temp = list[index];
+
+            var newindex = index + count;
+            if (newindex >= list.Count || newindex < 0)
+            {
+                return;
+            }
+
+            list[index] = list[newindex];
+            list[newindex] = temp;
+
+        }
+
+        private void ChangeSequence(int pos)
+        {
+            var sourceNow = lstSource.SelectedItem as HostsSource;
+            if (sourceNow != null)
+            {
+                var nowindex = _hostsSources.IndexOf(sourceNow);
+                HostsSource alter = null;
+                if (nowindex + pos >= 0 && nowindex + pos < _hostsSources.Count)
+                {
+                    alter = _hostsSources[nowindex + pos];
+                }
+                try
+                {
+                    if (alter != null)
+                    {
+                        var n = HostsSourceManager.Instance.ChangeSequence(sourceNow.Id, alter.Id);
+                        if (n > 0)
+                        {
+                            LoadHostSource(alter.Id);
+                        }
+                        else
+                        {
+                            Message("操作失败");
+                        }
+                    }
+                }
+                catch (ItemNotFoundException)
+                {
+                    Message("要操作的对象不存在");
+                }
+            }
+        }
+
+        private void btnUpSource_Click(object sender, EventArgs e)
+        {
+            ChangeSequence(-1);
+            EnableControl(sender);
+        }
+
+        private void btnDownSource_Click(object sender, EventArgs e)
+        {
+            ChangeSequence(1);
+            EnableControl(sender);
+        }
+
+        private void lstSource_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        btnEditSource_Click(null, null); ;
+                        e.Handled = true;
+                        break;
+                    case Keys.Delete:
+                        btnDeleteSource_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+            if (e.KeyData == (Keys.Alt | Keys.Up))
+            {
+                btnUpSource_Click(null, null);
+                e.Handled = true;
+            }
+            else if (e.KeyData == (Keys.Alt | Keys.Down))
+            {
+                btnDownSource_Click(null, null);
+                e.Handled = true;
+            }
+        }
+
+        private void lstIp_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Delete:
+                        btnDeleteIp_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        private void lstHostName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Delete:
+                        btnDeleteHostName_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        private void txtHostNameFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        btnAddHostName_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        private void txtIpFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        btnAddIp_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        private void btnApplyToHosts_Click(object sender, EventArgs e)
+        {
+            new Thread(() =>
+            {
+                try
+                {
+                    lblApplyMsgMessage("获取用户hosts配置...");
+                    var dicUser = UserHostManager.Instance.GetUserDictionary();
+
+                    lblApplyMsgMessage("下载远程hosts配置...");
+                    var dicRemote = HostsSourceManager.Instance.GetRemoteDictionary();
+
+                    lblApplyMsgMessage("缓存远程hosts配置...");
+
+                    HostsSourceManager.Instance.WriteRemoteDicBak(dicRemote);
+                    //File.WriteAllLines(
+                    //    ExtentionClass.ApplicationPath + "remoteback.txt",
+                    //    dicRemote.Select(pair => $"{pair.Value}\t{pair.Key}"));
+
+                    lblApplyMsgMessage("混合hosts配置...");
+                    foreach (KeyValuePair<string, string> pair in dicRemote)
+                    {
+                        if (!dicUser.ContainsKey(pair.Key))
+                            dicUser.Add(pair.Key, pair.Value);
+                    }
+                    dicUser.Remove("localhost");
+                    dicUser.Remove("broadcasthost");
+                    var listDefault = new List<string>()
+                    {
+                        "127.0.0.1\tlocalhost",
+                        "255.255.255.255\tbroadcasthost",
+                        "::1\tlocalhost",
+                        "fe80::1%lo0\tlocalhost"
+                    };
+                    listDefault.AddRange(dicUser.Select(pair => $"{pair.Value}\t{pair.Key}"));
+
+                    lblApplyMsgMessage("备份Hosts文件...");
+
+                    File.Copy(@"C:\windows\system32\drivers\etc\hosts", ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
+                    File.Delete(@"C:\windows\system32\drivers\etc\hosts");
+                    lblApplyMsgMessage("创建新的Hosts文件...");
+                    File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
+
+                    lblApplyMsgMessage("完成...");
+                }
+                catch (HostSourceFalseException ex)
+                {
+                    Message("下载Hosts时失败：" + ex.RequestUrl + "  " + ex.Message);
+                }
+
+                EnableControl(sender);
+            })
+            { IsBackground = true }
+            .Start();
+        }
+
+
+
+        private void lblApplyMsgMessage(string msg)
+        {
+            if (txtLog.InvokeRequired)
+            {
+                txtLog.Invoke(new MethodInvoker(() =>
+                {
+                    txtLog.AppendText(msg + "\r\n");
+                }));
+            }
+        }
+
+        private void btnApplyOnlyUser_Click(object sender, EventArgs e)
+        {
+            new Thread(() =>
+            {
+                try
+                {
+                    lblApplyMsgMessage("获取用户hosts配置...");
+                    var dicUser = UserHostManager.Instance.GetUserDictionary();
+
+                    lblApplyMsgMessage("读取远程hosts配置缓存...");
+                    var dicRemote = HostsSourceManager.Instance.ReadRemoteDicBak();
+
+                    lblApplyMsgMessage("混合hosts配置...");
+                    foreach (KeyValuePair<string, string> pair in dicRemote ?? new Dictionary<string, string>())
+                    {
+                        if (!dicUser.ContainsKey(pair.Key))
+                            dicUser.Add(pair.Key, pair.Value);
+                    }
+                    dicUser.Remove("localhost");
+                    dicUser.Remove("broadcasthost");
+                    var listDefault = new List<string>()
+                    {
+                        "127.0.0.1\tlocalhost",
+                        "255.255.255.255\tbroadcasthost",
+                        "::1\tlocalhost",
+                        "fe80::1%lo0\tlocalhost"
+                    };
+                    listDefault.AddRange(dicUser.Select(pair => $"{pair.Value}\t{pair.Key}"));
+
+                    lblApplyMsgMessage("备份Hosts文件...");
+
+                    File.Copy(@"C:\windows\system32\drivers\etc\hosts", ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
+                    File.Delete(@"C:\windows\system32\drivers\etc\hosts");
+                    lblApplyMsgMessage("创建新的Hosts文件...");
+                    File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
+
+                    lblApplyMsgMessage("完成...");
+                }
+                catch (HostSourceFalseException ex)
+                {
+                    Message("下载Hosts时失败：" + ex.RequestUrl + "  " + ex.Message);
+                }
+
+                EnableControl(sender);
+            })
+            { IsBackground = true }
+            .Start();
         }
     }
 }

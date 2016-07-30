@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace System.Data.SQLite
+﻿namespace HostsManageTool.Winform.Sqlite
 {
     public class SQLiteColumn
     {

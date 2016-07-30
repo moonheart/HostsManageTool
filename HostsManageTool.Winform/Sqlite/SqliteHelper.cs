@@ -5,11 +5,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using System.Globalization;
+using System.Data.SQLite;
+using System.Text;
 
-namespace System.Data.SQLite
+namespace HostsManageTool.Winform.Sqlite
 {
     public enum ColType
     {
@@ -356,7 +356,7 @@ namespace System.Data.SQLite
 
         public void CreateTable(SQLiteTable table)
         {
-            StringBuilder sb = new Text.StringBuilder();
+            StringBuilder sb = new System.Text.StringBuilder();
             sb.Append("create table if not exists `");
             sb.Append(table.TableName);
             sb.AppendLine("`(");
@@ -461,7 +461,7 @@ namespace System.Data.SQLite
                 }
             }
 
-            StringBuilder sb = new Text.StringBuilder();
+            StringBuilder sb = new System.Text.StringBuilder();
 
             foreach (KeyValuePair<string, bool> kv in dic)
             {
@@ -473,7 +473,7 @@ namespace System.Data.SQLite
                 sb.Append("`");
             }
 
-            StringBuilder sb2 = new Text.StringBuilder();
+            StringBuilder sb2 = new System.Text.StringBuilder();
             sb2.Append("insert into `");
             sb2.Append(tableTo);
             sb2.Append("`(");

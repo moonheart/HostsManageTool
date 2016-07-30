@@ -6,15 +6,22 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HostsManageTool.Winform.Sqlite;
 
 namespace HostsManageTool.Winform
 {
     public static class ExtentionClass
     {
+        /// <summary>
+        /// 应用程序路径
+        /// </summary>
+        public static string ApplicationPath = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
         /// <summary>
         /// 获取连接字符串
         /// </summary>
@@ -27,7 +34,7 @@ namespace HostsManageTool.Winform
                 {
                     throw new Exception("连接字符串未配置");
                 }
-                var path = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+                var path = ApplicationPath;
                 return string.Format(conn, path);
             }
         }
@@ -56,7 +63,20 @@ namespace HostsManageTool.Winform
         public static void EnableControl(object s)
         {
             var sender = s as Control;
-            if (sender != null) sender.Enabled = true;
+            if (sender != null)
+            {
+                if (sender.InvokeRequired)
+                {
+                    sender.Invoke(new MethodInvoker(() =>
+                    {
+                        sender.Enabled = true;
+                    }));
+                }
+                else
+                {
+                    sender.Enabled = true;
+                }
+            }
         }
 
 
@@ -78,33 +98,75 @@ namespace HostsManageTool.Winform
             var request = (HttpWebRequest)WebRequest.Create(url);
 
             Stream rs;
-            using (var response = request.GetResponse())
+            try
             {
-                rs = response.GetResponseStream();
-                if (rs != null)
+                using (var response = request.GetResponse())
                 {
-                    string str;
-                    using (var sr = new StreamReader(rs))
+                    rs = response.GetResponseStream();
+                    if (rs != null)
                     {
-                        str = sr.ReadToEnd();
-                    }
-                    var list = str.Split('\n').Where(d => !d.IsNullOrWhiteSpace() && IpStartStrings.Contains(d[0])).ToList();
-                    if (list.Count > 0)
-                    {
-                        var dic = new Dictionary<string, string>();
-
-                        foreach (string s in list)
+                        string str;
+                        using (var sr = new StreamReader(rs))
                         {
-                            var ss = s.Trim().Replace("\t", " ").Split(' ');
-                            if (!dic.ContainsKey(ss.Last()))
-                                dic.Add(ss.Last(), ss.First());
+                            str = sr.ReadToEnd();
                         }
-                        return dic;
+                        var list = str.Split('\n').Where(d => !d.IsNullOrWhiteSpace() && IpStartStrings.Contains(d[0])).ToList();
+                        if (list.Count > 0)
+                        {
+                            var dic = new Dictionary<string, string>();
+
+                            foreach (string s in list)
+                            {
+                                var ss = s.Trim().Replace("\t", " ").Split(' ');
+                                if (!dic.ContainsKey(ss.Last()))
+                                    dic.Add(ss.Last(), ss.First());
+                            }
+                            return dic;
+                        }
+                        return null;
                     }
-                    return null;
                 }
             }
+            catch (WebException ex)
+            {
+
+                var exc = new HostSourceFalseException(url, ex.Message);
+
+                throw exc;
+            }
             return null;
+        }
+
+
+        public static void WriteBinary<T>(T data, string path)
+            where T : ISerializable
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        IFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(ms, data);
+                        bw.Write(ms.GetBuffer());
+                        bw.Flush();
+                    }
+                }
+            }
+        }
+
+        public static T ReadBinary<T>(string path)
+            where T : ISerializable
+        {
+            if (!File.Exists(path))
+                return default(T);
+            var b = File.ReadAllBytes(path);
+            using (MemoryStream ms = new MemoryStream(b))
+            {
+                IFormatter formatter = new BinaryFormatter();
+                return (T)formatter.Deserialize(ms);
+            }
         }
     }
 }

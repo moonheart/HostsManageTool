@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HostsManageTool.Winform.Model;
+using HostsManageTool.Winform.Sqlite;
 
 namespace HostsManageTool.Winform.Bll
 {
@@ -213,7 +214,8 @@ namespace HostsManageTool.Winform.Bll
             {
                 throw new ItemNotFoundException();
             }
-            var sql = $"delete from hostip where id = {hostip.Id}";
+            var sql = $"delete from hostip where id = {hostip.Id};";
+            sql += $"delete from hosttoip where IpId={hostip.Id};";
             return Helper.Execute(sql);
         }
 
@@ -242,5 +244,32 @@ namespace HostsManageTool.Winform.Bll
             ip.NameId = int.Parse(row["NameId"] + "");
             return ip;
         }
+
+        public Dictionary<string, string> GetUserDictionary()
+        {
+            var dic = new Dictionary<string, string>();
+            var sql =
+@"SELECT t3.IpAddress as IpAddress,
+       t2.Name as HostName
+  FROM HostToIp t1
+       LEFT OUTER JOIN
+       HostName t2 ON t1.NameId = t2.Id
+       LEFT OUTER JOIN
+       HostIp t3 ON t1.IpId = t3.Id;
+ ";
+            var dt = Helper.Select(sql);
+            var list = dt?.AsEnumerable().Select(HostsItem.DataRowToHostsItem);
+            if (list != null)
+            {
+                foreach (var hostsItem in list)
+                {
+                    if (!dic.ContainsKey(hostsItem.HostName))
+                        dic.Add(hostsItem.HostName, hostsItem.IpAddress);
+                }
+            }
+            return dic;
+        }
+
+
     }
 }

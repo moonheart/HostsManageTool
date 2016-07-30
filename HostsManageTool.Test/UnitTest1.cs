@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data.SQLite;
 using HostsManageTool.Winform;
+using HostsManageTool.Winform.Sqlite;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HostsManageTool.Test
@@ -16,10 +18,13 @@ namespace HostsManageTool.Test
         [TestMethod]
         public void TTT()
         {
-            var s = "http://jsdgfjhdsf";
-            var u = new Uri(s);
+            var sql = @"insert into hostname (name) values('ccccccccccccc');
+insert into hostname(name) values('ddddddddddddd'); ";
+            var conn = new SQLiteConnection(ExtentionClass.ConnectinString);
+            conn.Open();
 
-            
+            var sqlh = new SQLiteHelper(new SQLiteCommand(conn));
+            sqlh.Execute(sql);
         }
     }
 }

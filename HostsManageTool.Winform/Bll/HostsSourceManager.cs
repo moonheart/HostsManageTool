@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using HostsManageTool.Winform.Model;
+using HostsManageTool.Winform.Sqlite;
 
 namespace HostsManageTool.Winform.Bll
 {
@@ -26,6 +27,27 @@ namespace HostsManageTool.Winform.Bll
         }
 
         /// <summary>
+        /// 交换顺序
+        /// </summary>
+        /// <param name="now"></param>
+        /// <param name="alter"></param>
+        /// <exception cref="ItemNotFoundException"></exception>
+        /// <returns></returns>
+        public int ChangeSequence(int now, int alter)
+        {
+            var sourceNow = FindById(now);
+            var sourceAlter = FindById(alter);
+            if (sourceNow == null || sourceAlter == null)
+            {
+                throw new ItemNotFoundException();
+            }
+            var sql1 = $"update hostssource set Name='{sourceNow.Name}',Url = '{sourceNow.Url}',isenabled = '{sourceNow.IsEnabled}' where id = {sourceAlter.Id};";
+            var sql2 = $"update hostssource set Name='{sourceAlter.Name}',Url = '{sourceAlter.Url}',isenabled = '{sourceAlter.IsEnabled}' where id = {sourceNow.Id};";
+            var n = Helper.Execute(sql1 + sql2);
+            return n;
+        }
+
+        /// <summary>
         /// 添加source
         /// </summary>
         /// <param name="source"></param>
@@ -39,12 +61,11 @@ namespace HostsManageTool.Winform.Bll
             {
                 throw new ItemAlreadyExitedException();
             }
-            var order = GetLargestOrder() + 1;
             var conn = new SQLiteConnection(ExtentionClass.ConnectinString);
             conn.Open();
             var h = new SQLiteHelper(new SQLiteCommand(conn));
 
-            var sql = $"insert into hostssource (name,url,[order]) values('{source.Name}','{source.Url}',{order})";
+            var sql = $"insert into hostssource (name,url) values('{source.Name}','{source.Url}')";
             var n = h.Execute(sql);
             if (n > 0)
             {
@@ -73,15 +94,6 @@ namespace HostsManageTool.Winform.Bll
             }
             var sql = $"update hostssource set url = '{source.Url}',name='{source.Name}' where id ={source.Id}";
             return Helper.Execute(sql);
-        }
-
-        public int GetLargestOrder()
-        {
-            var sql = "select [order] from hostssource order by [order] desc limit 1";
-            var obj = Helper.ExecuteScalar(sql);
-            int order;
-            int.TryParse(obj + "", out order);
-            return order;
         }
 
         public HostsSource FindByUrl(string url)
@@ -124,7 +136,7 @@ namespace HostsManageTool.Winform.Bll
         /// 获取所有hosts源
         /// </summary>
         /// <returns></returns>
-        public List<HostsSource> GetHostsSourceList()
+        public List<HostsSource> GetAllHostsSource()
         {
             var sql = "select * from hostssource";
             var dt = Helper.Select(sql);
@@ -133,21 +145,6 @@ namespace HostsManageTool.Winform.Bll
             //throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 启用项目
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public int EnableSource(int id)
-        {
-            var source = FindById(id);
-            if (source == null)
-            {
-                throw new ItemNotFoundException();
-            }
-            var sql = $"update hostssource set Isenabled =1 where id={id} ";
-            return Helper.Execute(sql);
-        }
 
         /// <summary>
         /// 切换状态
@@ -167,21 +164,6 @@ namespace HostsManageTool.Winform.Bll
             return Helper.Execute(sql);
         }
 
-        /// <summary>
-        /// 禁用项目
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public int DisableSource(int id)
-        {
-            var source = FindById(id);
-            if (source == null)
-            {
-                throw new ItemNotFoundException();
-            }
-            var sql = $"update hostssource set Isenabled =0 where id={id} ";
-            return Helper.Execute(sql);
-        }
 
 
         public HostsSource DataRowToHostsSource(DataRow row)
@@ -191,9 +173,48 @@ namespace HostsManageTool.Winform.Bll
             source.IsEnabled = int.Parse(row["IsEnabled"] + "");
             source.Name = row["Name"] + "";
             source.Url = row["Url"] + "";
-            source.Order = int.Parse(row["Order"] + "");
             return source;
         }
 
+        public Dictionary<string, string> GetRemoteDictionary()
+        {
+            var dic = new Dictionary<string, string>();
+            var list = GetAllHostsSource();
+            if (list != null)
+            {
+                list = list.Where(d => d.IsEnabled == 1).OrderBy(d => d.Id).ToList();
+                foreach (var hostsSource in list)
+                {
+                    var d = ExtentionClass.DownloaHosts(hostsSource.Url);
+                    foreach (KeyValuePair<string, string> pair in d)
+                    {
+                        if (!dic.ContainsKey(pair.Key))
+                        {
+                            dic.Add(pair.Key, pair.Value);
+                        }
+                    }
+
+                }
+            }
+            return dic;
+        }
+
+        /// <summary>
+        /// 写入远程hosts配置缓存
+        /// </summary>
+        /// <param name="dictionary"></param>
+        public void WriteRemoteDicBak(Dictionary<string, string> dictionary)
+        {
+            ExtentionClass.WriteBinary(dictionary, ExtentionClass.ApplicationPath + "remote.bak");
+        }
+
+        /// <summary>
+        /// 读取缓存的远程hosts配置
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, string> ReadRemoteDicBak()
+        {
+            return ExtentionClass.ReadBinary<Dictionary<string, string>>(ExtentionClass.ApplicationPath + "remote.bak");
+        }
     }
 }

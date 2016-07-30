@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,5 +36,19 @@ namespace HostsManageTool.Winform
     public class ItemOperationFaildException : Exception
     {
         public ItemOperationFaildException() : base("操作失败") { }
+    }
+
+    public class HostSourceFalseException : Exception
+    {
+        public string RequestUrl { get; set; }
+
+        public override string Message { get; }
+
+        public HostSourceFalseException(string url, string msg)
+        {
+            Message = msg;
+            RequestUrl = url;
+        }
+
     }
 }

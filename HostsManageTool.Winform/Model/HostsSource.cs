@@ -13,8 +13,6 @@ namespace HostsManageTool.Winform.Model
 
         public int IsEnabled { get; set; }
 
-        public int Order { get; set; }
-
         public string Display
         {
             get

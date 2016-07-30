@@ -78,6 +78,7 @@
     <Compile Include="ExtentionClass.cs" />
     <Compile Include="Model\HostIp.cs" />
     <Compile Include="Model\HostName.cs" />
+    <Compile Include="Model\HostsItem.cs" />
     <Compile Include="Model\HostsSource.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
