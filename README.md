@@ -18,3 +18,5 @@ manage your hosts
 自动获取管理员权限
 
 实时过滤列表
+
+![image](https://github.com/moonheart/HostsManageTool/raw/master/Images/2016-07-31_002227.jpg)
