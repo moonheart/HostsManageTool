@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostsManageTool.Winform", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostsManageTool.Test", "HostsManageTool.Test\HostsManageTool.Test.csproj", "{4EB8FEF2-E620-43BE-A7DC-92D61970622A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{6F255D9F-5E89-4155-9508-A5D209568811}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Pictures\Screenshots\2016-07-31_002227.bmp = ..\..\Pictures\Screenshots\2016-07-31_002227.bmp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
