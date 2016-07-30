@@ -423,6 +423,7 @@ namespace HostsManageTool.Winform
                 _hostNamesSerch.AddRange(_hostNames.Where(d => d.Name.Contains(txt)));
             }
             SetHostNameBinding(_hostNamesSerch);
+            lstHostName.SelectedIndex = _hostNamesSerch.Count > 0 ? 0 : -1;
 
         }
 
@@ -439,6 +440,7 @@ namespace HostsManageTool.Winform
                 _hostIpsSearch.AddRange(_hostIps.Where(d => d.IpAddress.Contains(txt)));
             }
             SetHostIpBinding(_hostIpsSearch);
+            lstIp.SelectedIndex = _hostIpsSearch.Count > 0 ? 0 : -1;
         }
 
         private void txtIpFilter_KeyPress(object sender, KeyPressEventArgs e)
