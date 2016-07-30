@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace HostsManageTool.Winform
 {
@@ -51,6 +52,12 @@ namespace HostsManageTool.Winform
         }
 
         public static char[] IpStartStrings = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+        public static void EnableControl(object s)
+        {
+            var sender = s as Control;
+            if (sender != null) sender.Enabled = true;
+        }
 
 
         public static bool IsNullOrWhiteSpace(this string s)

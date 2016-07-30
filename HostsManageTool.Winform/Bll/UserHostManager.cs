@@ -157,6 +157,13 @@ namespace HostsManageTool.Winform.Bll
 
         #region Ip
 
+        public HostIp FindHostIpById(int id)
+        {
+            var sql = $"select * from hostip where id= {id}";
+            var dt = Helper.Select(sql);
+            return dt?.AsEnumerable().Select(DataRowToHostIp).FirstOrDefault();
+        }
+
         /// <summary>
         /// 获取所有Ip
         /// </summary>
@@ -192,6 +199,24 @@ namespace HostsManageTool.Winform.Bll
             }
             return null;
         }
+
+        /// <summary>
+        /// 删除Ip
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="ItemNotFoundException"></exception>
+        /// <returns></returns>
+        public int RemoveHostIp(int id)
+        {
+            var hostip = FindHostIpById(id);
+            if (hostip == null)
+            {
+                throw new ItemNotFoundException();
+            }
+            var sql = $"delete from hostip where id = {hostip.Id}";
+            return Helper.Execute(sql);
+        }
+
 
         #endregion
 

@@ -20,6 +20,8 @@ namespace HostsManageTool.Winform
         private List<HostIp> _hostIps = new List<HostIp>();
         private List<HostIp> _hostIpsSearch = new List<HostIp>();
 
+        private List<HostsSource> _hostsSources = new List<HostsSource>();
+
 
         public MainForm()
         {
@@ -35,6 +37,25 @@ namespace HostsManageTool.Winform
         {
             LoadHostNameData();
             LoadHostIpData();
+            LoadHostSource();
+        }
+
+
+        private void LoadHostSource(int selectedvalue = 0)
+        {
+            var list = HostsSourceManager.Instance.GetHostsSourceList();
+            if (list != null)
+            {
+
+                _hostsSources.Clear();
+                _hostsSources.AddRange(list.OrderBy(d => d.Order));
+                SetSourceBinding(_hostsSources);
+                lstSource.SelectedValue = selectedvalue;
+            }
+            else
+            {
+                Message("加载数据出错");
+            }
         }
 
         /// <summary>
@@ -57,6 +78,15 @@ namespace HostsManageTool.Winform
             {
                 Message("加载数据出错");
             }
+        }
+
+        private void SetSourceBinding(List<HostsSource> list)
+        {
+            lstSource.DataSource = null;
+            lstSource.ResetBindings();
+            lstSource.DataSource = list;
+            lstSource.DisplayMember = "Display";
+            lstSource.ValueMember = "Id";
         }
 
         private void SetHostNameBinding(List<HostName> list)
@@ -227,14 +257,13 @@ namespace HostsManageTool.Winform
                 else
                 {
                     Message("请输入正确的Ip地址");
-                    txtIpFilter.Focus();
-                    txtIpFilter.SelectAll();
                 }
             }
             else
             {
-                txtIpFilter.Focus();
             }
+            txtIpFilter.Focus();
+            txtIpFilter.SelectAll();
             EnableControl(sender);
         }
 
@@ -314,8 +343,7 @@ namespace HostsManageTool.Winform
 
         private void EnableControl(object s)
         {
-            var sender = s as Control;
-            if (sender != null) sender.Enabled = true;
+            ExtentionClass.EnableControl(s);
         }
 
         private void btnDeleteHostName_Click(object sender, EventArgs e)
@@ -338,7 +366,26 @@ namespace HostsManageTool.Winform
 
         private void btnDeleteIp_Click(object sender, EventArgs e)
         {
-
+            var ip = lstIp.SelectedItem as HostIp;
+            if (ip != null)
+            {
+                try
+                {
+                    var n = UserHostManager.Instance.RemoveHostIp(ip.Id);
+                    if (n <= 0)
+                    {
+                        Message("删除失败");
+                    }
+                    else
+                    {
+                        LoadHostIpData();
+                    }
+                }
+                catch (ItemNotFoundException)
+                {
+                    Message("要删除的对象不存在");
+                }
+            }
             EnableControl(sender);
         }
 
@@ -379,6 +426,25 @@ namespace HostsManageTool.Winform
             {
                 e.Handled = true;
             }
+        }
+
+        private void btnAddSource_Click(object sender, EventArgs e)
+        {
+            var form = new SourceEditForm();
+            form.Text = "添加Hosts源";
+            var re = form.ShowDialog();
+            switch (re)
+            {
+                case DialogResult.OK:
+                    var source = form.Source;
+                    HostsSourceManager.Instance.AddHostSource(source);
+                    break;
+                case DialogResult.Cancel:
+
+                    break;
+            }
+
+            EnableControl(sender);
         }
     }
 }

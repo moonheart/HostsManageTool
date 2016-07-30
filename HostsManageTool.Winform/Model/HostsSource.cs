@@ -14,5 +14,18 @@ namespace HostsManageTool.Winform.Model
         public int IsEnabled { get; set; }
 
         public int Order { get; set; }
+
+        public string Display
+        {
+            get
+            {
+                var r = (IsEnabled == 1 ? "“—∆Ù”√" : "Œ¥∆Ù”√") + "|";
+                if (Name.IsNullOrWhiteSpace())
+                {
+                    return r + Url;
+                }
+                return r + Name + "|" + Url;
+            }
+        }
     }
 }

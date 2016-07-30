@@ -25,6 +25,34 @@ namespace HostsManageTool.Winform.Bll
 
         }
 
+        public int AddHostSource(HostsSource source)
+        {
+            var s = FindByUrl(source.Url);
+            if (s != null)
+            {
+                throw new ItemAlreadyExitedException();
+            }
+            var order = GetLargestOrder() + 1;
+            var sql = $"insert into hostssource (name,url,[order]) values('{source.Name}','{source.Url}',{order})";
+            return Helper.Execute(sql);
+        }
+
+        public int GetLargestOrder()
+        {
+            var sql = "select [order] from hostssource order by [order] desc limit 1";
+            var obj = Helper.ExecuteScalar(sql);
+            int order;
+            int.TryParse(obj + "", out order);
+            return order;
+        }
+
+        public HostsSource FindByUrl(string url)
+        {
+            var sql = $"select * from hostssource where Url = '{url}'";
+            var dt = Helper.Select(sql);
+            return dt?.AsEnumerable().Select(DataRowToHostsSource).FirstOrDefault();
+        }
+
         /// <summary>
         /// 通过Id查找
         /// </summary>
@@ -113,7 +141,7 @@ namespace HostsManageTool.Winform.Bll
             return Helper.Execute(sql);
         }
 
-        
+
         public HostsSource DataRowToHostsSource(DataRow row)
         {
             var source = new HostsSource();

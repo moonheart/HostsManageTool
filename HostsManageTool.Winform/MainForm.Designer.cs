@@ -39,6 +39,14 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.txtCurrent = new System.Windows.Forms.TextBox();
+            this.lstSource = new System.Windows.Forms.ListBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btnUpSource = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnDownSource = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnDisableEnable = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnEditSource = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnDeleteSource = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.btnAddSource = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnDirect = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnDeleteIp = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnAddIp = new HostsManageTool.Winform.UserControl.ButtonEx();
@@ -127,9 +135,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(276, 42);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.Size = new System.Drawing.Size(89, 12);
             this.label5.TabIndex = 5;
-            this.label5.Text = "当前指向：";
+            this.label5.Text = "当前主机指向：";
             // 
             // txtCurrent
             // 
@@ -139,6 +147,80 @@
             this.txtCurrent.Size = new System.Drawing.Size(107, 21);
             this.txtCurrent.TabIndex = 6;
             this.txtCurrent.TextChanged += new System.EventHandler(this.txtCurrent_TextChanged);
+            // 
+            // lstSource
+            // 
+            this.lstSource.FormattingEnabled = true;
+            this.lstSource.ItemHeight = 12;
+            this.lstSource.Location = new System.Drawing.Point(495, 53);
+            this.lstSource.Name = "lstSource";
+            this.lstSource.Size = new System.Drawing.Size(270, 400);
+            this.lstSource.TabIndex = 8;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label6.Location = new System.Drawing.Point(491, 9);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(124, 19);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Hosts源列表";
+            // 
+            // btnUpSource
+            // 
+            this.btnUpSource.Location = new System.Drawing.Point(771, 157);
+            this.btnUpSource.Name = "btnUpSource";
+            this.btnUpSource.Size = new System.Drawing.Size(38, 23);
+            this.btnUpSource.TabIndex = 9;
+            this.btnUpSource.Text = "上移";
+            this.btnUpSource.UseVisualStyleBackColor = true;
+            // 
+            // btnDownSource
+            // 
+            this.btnDownSource.Location = new System.Drawing.Point(771, 186);
+            this.btnDownSource.Name = "btnDownSource";
+            this.btnDownSource.Size = new System.Drawing.Size(38, 23);
+            this.btnDownSource.TabIndex = 9;
+            this.btnDownSource.Text = "下移";
+            this.btnDownSource.UseVisualStyleBackColor = true;
+            // 
+            // btnDisableEnable
+            // 
+            this.btnDisableEnable.Location = new System.Drawing.Point(771, 215);
+            this.btnDisableEnable.Name = "btnDisableEnable";
+            this.btnDisableEnable.Size = new System.Drawing.Size(38, 23);
+            this.btnDisableEnable.TabIndex = 9;
+            this.btnDisableEnable.Text = "禁用";
+            this.btnDisableEnable.UseVisualStyleBackColor = true;
+            // 
+            // btnEditSource
+            // 
+            this.btnEditSource.Location = new System.Drawing.Point(771, 111);
+            this.btnEditSource.Name = "btnEditSource";
+            this.btnEditSource.Size = new System.Drawing.Size(38, 23);
+            this.btnEditSource.TabIndex = 9;
+            this.btnEditSource.Text = "编辑";
+            this.btnEditSource.UseVisualStyleBackColor = true;
+            // 
+            // btnDeleteSource
+            // 
+            this.btnDeleteSource.Location = new System.Drawing.Point(771, 82);
+            this.btnDeleteSource.Name = "btnDeleteSource";
+            this.btnDeleteSource.Size = new System.Drawing.Size(38, 23);
+            this.btnDeleteSource.TabIndex = 9;
+            this.btnDeleteSource.Text = "删除";
+            this.btnDeleteSource.UseVisualStyleBackColor = true;
+            // 
+            // btnAddSource
+            // 
+            this.btnAddSource.Location = new System.Drawing.Point(771, 53);
+            this.btnAddSource.Name = "btnAddSource";
+            this.btnAddSource.Size = new System.Drawing.Size(38, 23);
+            this.btnAddSource.TabIndex = 9;
+            this.btnAddSource.Text = "添加";
+            this.btnAddSource.UseVisualStyleBackColor = true;
+            this.btnAddSource.Click += new System.EventHandler(this.btnAddSource_Click);
             // 
             // btnDirect
             // 
@@ -215,6 +297,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(894, 480);
+            this.Controls.Add(this.btnUpSource);
+            this.Controls.Add(this.btnDownSource);
+            this.Controls.Add(this.btnDisableEnable);
+            this.Controls.Add(this.btnEditSource);
+            this.Controls.Add(this.btnDeleteSource);
+            this.Controls.Add(this.btnAddSource);
+            this.Controls.Add(this.lstSource);
             this.Controls.Add(this.btnDirect);
             this.Controls.Add(this.txtCurrent);
             this.Controls.Add(this.label5);
@@ -228,11 +317,13 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtIpFilter);
             this.Controls.Add(this.txtHostNameFilter);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lstIp);
             this.Controls.Add(this.lstHostName);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Hosts管理";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
@@ -259,6 +350,14 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtCurrent;
         private HostsManageTool.Winform.UserControl.ButtonEx btnDirect;
+        private System.Windows.Forms.ListBox lstSource;
+        private System.Windows.Forms.Label label6;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnAddSource;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnDeleteSource;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnDisableEnable;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnEditSource;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnDownSource;
+        private HostsManageTool.Winform.UserControl.ButtonEx btnUpSource;
     }
 }
 
