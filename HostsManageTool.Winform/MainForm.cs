@@ -436,8 +436,27 @@ namespace HostsManageTool.Winform
             switch (re)
             {
                 case DialogResult.OK:
-                    var source = form.Source;
-                    HostsSourceManager.Instance.AddHostSource(source);
+                    try
+                    {
+                        var source = form.Source;
+                        var n = HostsSourceManager.Instance.AddHostSource(source);
+                        if (n != null)
+                        {
+                            LoadHostSource(n.Id);
+                        }
+                        else
+                        {
+                            Message("添加失败");
+                        }
+                    }
+                    catch (ItemAlreadyExitedException)
+                    {
+                        Message("相同Url的已存在");
+                    }
+                    catch (ItemOperationFaildException)
+                    {
+                        Message("添加失败");
+                    }
                     break;
                 case DialogResult.Cancel:
 
@@ -445,6 +464,95 @@ namespace HostsManageTool.Winform
             }
 
             EnableControl(sender);
+        }
+
+        private void btnDeleteSource_Click(object sender, EventArgs e)
+        {
+            var source = lstSource.SelectedItem as HostsSource;
+            if (source != null)
+            {
+                try
+                {
+                    var n = HostsSourceManager.Instance.DeleteHostsSource(source.Id);
+                    if (n > 0)
+                    {
+                        LoadHostSource();
+                    }
+                }
+                catch (ItemNotFoundException)
+                {
+                    Message("要删除的项目不存在");
+                }
+            }
+            EnableControl(sender);
+        }
+
+        private void btnEditSource_Click(object sender, EventArgs e)
+        {
+            var source = lstSource.SelectedItem as HostsSource;
+            if (source != null)
+            {
+                var form = new SourceEditForm();
+                form.Source = source;
+                form.Text = "添加Hosts源";
+                var re = form.ShowDialog();
+                switch (re)
+                {
+                    case DialogResult.OK:
+                        try
+                        {
+                            //source = form.Source;
+                            var n = HostsSourceManager.Instance.UpdateHostsSource(source);
+                            if (n > 0)
+                            {
+                                LoadHostSource(source.Id);
+                            }
+                            else
+                            {
+                                Message("修改失败");
+                            }
+                        }
+                        catch (ItemNotFoundException)
+                        {
+                            Message("找不到要修改的对象");
+                        }
+                        break;
+                    case DialogResult.Cancel:
+
+                        break;
+                }
+            }
+            EnableControl(sender);
+        }
+
+        private void btnDisableEnable_Click(object sender, EventArgs e)
+        {
+            var s = lstSource.SelectedItem as HostsSource;
+            if (s != null)
+            {
+                try
+                {
+                    var n = HostsSourceManager.Instance.DisbaleEnable(s.Id);
+                    if (n > 0)
+                    {
+                        LoadHostSource(s.Id);
+                    }
+                }
+                catch (ItemNotFoundException)
+                {
+                    Message("找不到要操作的项");
+                }
+            }
+            EnableControl(sender);
+        }
+
+        private void lstSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var s = lstSource.SelectedItem as HostsSource;
+            if (s != null)
+            {
+                btnDisableEnable.Text = s.IsEnabled == 1 ? "禁用" : "启用";
+            }
         }
     }
 }

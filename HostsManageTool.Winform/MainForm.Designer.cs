@@ -156,6 +156,7 @@
             this.lstSource.Name = "lstSource";
             this.lstSource.Size = new System.Drawing.Size(270, 400);
             this.lstSource.TabIndex = 8;
+            this.lstSource.SelectedIndexChanged += new System.EventHandler(this.lstSource_SelectedIndexChanged);
             // 
             // label6
             // 
@@ -172,7 +173,7 @@
             this.btnUpSource.Location = new System.Drawing.Point(771, 157);
             this.btnUpSource.Name = "btnUpSource";
             this.btnUpSource.Size = new System.Drawing.Size(38, 23);
-            this.btnUpSource.TabIndex = 9;
+            this.btnUpSource.TabIndex = 12;
             this.btnUpSource.Text = "上移";
             this.btnUpSource.UseVisualStyleBackColor = true;
             // 
@@ -181,7 +182,7 @@
             this.btnDownSource.Location = new System.Drawing.Point(771, 186);
             this.btnDownSource.Name = "btnDownSource";
             this.btnDownSource.Size = new System.Drawing.Size(38, 23);
-            this.btnDownSource.TabIndex = 9;
+            this.btnDownSource.TabIndex = 13;
             this.btnDownSource.Text = "下移";
             this.btnDownSource.UseVisualStyleBackColor = true;
             // 
@@ -190,27 +191,30 @@
             this.btnDisableEnable.Location = new System.Drawing.Point(771, 215);
             this.btnDisableEnable.Name = "btnDisableEnable";
             this.btnDisableEnable.Size = new System.Drawing.Size(38, 23);
-            this.btnDisableEnable.TabIndex = 9;
+            this.btnDisableEnable.TabIndex = 14;
             this.btnDisableEnable.Text = "禁用";
             this.btnDisableEnable.UseVisualStyleBackColor = true;
+            this.btnDisableEnable.Click += new System.EventHandler(this.btnDisableEnable_Click);
             // 
             // btnEditSource
             // 
             this.btnEditSource.Location = new System.Drawing.Point(771, 111);
             this.btnEditSource.Name = "btnEditSource";
             this.btnEditSource.Size = new System.Drawing.Size(38, 23);
-            this.btnEditSource.TabIndex = 9;
+            this.btnEditSource.TabIndex = 11;
             this.btnEditSource.Text = "编辑";
             this.btnEditSource.UseVisualStyleBackColor = true;
+            this.btnEditSource.Click += new System.EventHandler(this.btnEditSource_Click);
             // 
             // btnDeleteSource
             // 
             this.btnDeleteSource.Location = new System.Drawing.Point(771, 82);
             this.btnDeleteSource.Name = "btnDeleteSource";
             this.btnDeleteSource.Size = new System.Drawing.Size(38, 23);
-            this.btnDeleteSource.TabIndex = 9;
+            this.btnDeleteSource.TabIndex = 10;
             this.btnDeleteSource.Text = "删除";
             this.btnDeleteSource.UseVisualStyleBackColor = true;
+            this.btnDeleteSource.Click += new System.EventHandler(this.btnDeleteSource_Click);
             // 
             // btnAddSource
             // 

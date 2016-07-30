@@ -25,7 +25,14 @@ namespace HostsManageTool.Winform.Bll
 
         }
 
-        public int AddHostSource(HostsSource source)
+        /// <summary>
+        /// 添加source
+        /// </summary>
+        /// <param name="source"></param>
+        /// <exception cref="ItemAlreadyExitedException"></exception>
+        /// <exception cref="ItemOperationFaildException"></exception>
+        /// <returns></returns>
+        public HostsSource AddHostSource(HostsSource source)
         {
             var s = FindByUrl(source.Url);
             if (s != null)
@@ -33,7 +40,38 @@ namespace HostsManageTool.Winform.Bll
                 throw new ItemAlreadyExitedException();
             }
             var order = GetLargestOrder() + 1;
+            var conn = new SQLiteConnection(ExtentionClass.ConnectinString);
+            conn.Open();
+            var h = new SQLiteHelper(new SQLiteCommand(conn));
+
             var sql = $"insert into hostssource (name,url,[order]) values('{source.Name}','{source.Url}',{order})";
+            var n = h.Execute(sql);
+            if (n > 0)
+            {
+                sql = "select last_insert_rowid() as Id from hostssource;";
+                var obj = h.ExecuteScalar(sql);
+                int id;
+                int.TryParse(obj + "", out id);
+                return FindById(id);
+            }
+            throw new ItemOperationFaildException();
+        }
+
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <param name="source"></param>
+        /// <exception cref="ItemNotFoundException"></exception>
+        /// <returns></returns>
+        public int UpdateHostsSource(HostsSource source)
+        {
+            var s = FindById(source.Id);
+            if (s == null)
+            {
+                throw new ItemNotFoundException();
+            }
+            var sql = $"update hostssource set url = '{source.Url}',name='{source.Name}' where id ={source.Id}";
             return Helper.Execute(sql);
         }
 
@@ -63,20 +101,6 @@ namespace HostsManageTool.Winform.Bll
             var sql = $"select * from hostssource where id = {id}";
             var dt = Helper.Select(sql);
             return dt?.AsEnumerable().Select(DataRowToHostsSource).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// 插入一条hosts源
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public int InsertHostsSource(HostsSource source)
-        {
-            var sql =
-                $"insert into hostssource (name,url,isenabled,order) values('{source.Name}','{source.Url}',{source.IsEnabled},{source.Order})";
-            return Helper.Execute(sql);
-
-            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -122,6 +146,24 @@ namespace HostsManageTool.Winform.Bll
                 throw new ItemNotFoundException();
             }
             var sql = $"update hostssource set Isenabled =1 where id={id} ";
+            return Helper.Execute(sql);
+        }
+
+        /// <summary>
+        /// 切换状态
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="ItemNotFoundException"></exception>
+        /// <returns></returns>
+        public int DisbaleEnable(int id)
+        {
+            var source = FindById(id);
+            if (source == null)
+            {
+                throw new ItemNotFoundException();
+            }
+
+            var sql = $"update hostssource set Isenabled ={(source.IsEnabled == 1 ? 0 : 1)} where id={id} ";
             return Helper.Execute(sql);
         }
 
