@@ -59,5 +59,23 @@ namespace HostsManageTool.Winform.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   查找类似 确认删除此条信息？删除后不可恢复！ 的本地化字符串。
+        /// </summary>
+        internal static string DeleteConfirmMessage {
+            get {
+                return ResourceManager.GetString("DeleteConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 删除确认 的本地化字符串。
+        /// </summary>
+        internal static string DeleteConfirmMessageTitle {
+            get {
+                return ResourceManager.GetString("DeleteConfirmMessageTitle", resourceCulture);
+            }
+        }
     }
 }

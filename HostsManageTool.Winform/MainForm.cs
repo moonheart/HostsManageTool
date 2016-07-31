@@ -1,28 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HostsManageTool.Winform.Bll;
 using HostsManageTool.Winform.Model;
+using HostsManageTool.Winform.Properties;
 
 namespace HostsManageTool.Winform
 {
     public partial class MainForm : Form
     {
-        private List<HostName> _hostNames = new List<HostName>();
-        private List<HostName> _hostNamesSerch = new List<HostName>();
+        /// <summary>
+        /// 主机名列表
+        /// </summary>
+        private readonly List<HostName> _hostNames = new List<HostName>();
+        private readonly List<HostName> _hostNamesSerch = new List<HostName>();
 
-        private List<HostIp> _hostIps = new List<HostIp>();
-        private List<HostIp> _hostIpsSearch = new List<HostIp>();
+        /// <summary>
+        /// Ip列表
+        /// </summary>
+        private readonly List<HostIp> _hostIps = new List<HostIp>();
+        private readonly List<HostIp> _hostIpsSearch = new List<HostIp>();
 
-        private List<HostsSource> _hostsSources = new List<HostsSource>();
+        /// <summary>
+        /// hosts源列表
+        /// </summary>
+        private readonly List<HostsSource> _hostsSources = new List<HostsSource>();
 
 
         public MainForm()
@@ -51,7 +56,12 @@ namespace HostsManageTool.Winform
             }
         }
 
+        #region 列表加载
 
+        /// <summary>
+        /// 加载hosts源列表
+        /// </summary>
+        /// <param name="selectedvalue">要选中的项Id</param>
         private void LoadHostSource(int selectedvalue = 0)
         {
             var list = HostsSourceManager.Instance.GetAllHostsSource();
@@ -72,6 +82,7 @@ namespace HostsManageTool.Winform
         /// <summary>
         /// 加载主机名列表
         /// </summary>
+        /// <param name="selectedvalue">要选中的项Id</param>
         private void LoadHostNameData(int selectedvalue = 0)
         {
             var list = UserHostManager.Instance.GetAllHostNames();
@@ -91,28 +102,9 @@ namespace HostsManageTool.Winform
             }
         }
 
-        private void SetSourceBinding(List<HostsSource> list)
-        {
-            lstSource.DataSource = null;
-            lstSource.ResetBindings();
-            lstSource.DataSource = list;
-            lstSource.DisplayMember = "Display";
-            lstSource.ValueMember = "Id";
-        }
-
-        private void SetHostNameBinding(List<HostName> list)
-        {
-            lstHostName.DataSource = null;
-            lstHostName.ResetBindings();
-            //lstHostName.DisplayMember = "Name";
-            //lstHostName.ValueMember = "Id";
-            lstHostName.DataSource = list;
-            lstHostName.DisplayMember = "Name";
-            lstHostName.ValueMember = "Id";
-        }
-
         /// <summary>
         /// 加载Ip列表
+        /// <param name="selectedvalue">要选中的项Id</param>
         /// </summary>
         private void LoadHostIpData(int selectedvalue = 0)
         {
@@ -128,6 +120,36 @@ namespace HostsManageTool.Winform
             }
         }
 
+        #endregion
+
+        #region 列表绑定
+
+        /// <summary>
+        /// 设置hosts源列表绑定
+        /// </summary>
+        /// <param name="list"></param>
+        private void SetSourceBinding(List<HostsSource> list)
+        {
+            lstSource.DataSource = null;
+            lstSource.ResetBindings();
+            lstSource.DataSource = list;
+            lstSource.DisplayMember = "Display";
+            lstSource.ValueMember = "Id";
+        }
+
+        /// 设置主机名列表绑定
+        private void SetHostNameBinding(List<HostName> list)
+        {
+            lstHostName.DataSource = null;
+            lstHostName.ResetBindings();
+            //lstHostName.DisplayMember = "Name";
+            //lstHostName.ValueMember = "Id";
+            lstHostName.DataSource = list;
+            lstHostName.DisplayMember = "Name";
+            lstHostName.ValueMember = "Id";
+        }
+
+        /// 设置Ip列表绑定
         private void SetHostIpBinding(List<HostIp> list)
         {
             lstIp.DataSource = null;
@@ -139,6 +161,19 @@ namespace HostsManageTool.Winform
             lstIp.ValueMember = "Id";
         }
 
+        #endregion
+
+        #region 公用操作
+        /// <summary>
+        /// 启用控件
+        /// </summary>
+        /// <param name="s"></param>
+        private void EnableControl(object s)
+        {
+            ExtentionClass.EnableControl(s);
+        }
+
+
         /// <summary>
         /// 弹出消息框
         /// </summary>
@@ -147,6 +182,50 @@ namespace HostsManageTool.Winform
         {
             MessageBox.Show(message);
         }
+
+        #endregion
+
+        #region 主机名操作
+        /// <summary>
+        /// 主机名列表快捷键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lstHostName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Delete:
+                        btnDeleteHostName_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// 主机名快速过滤快捷键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtHostNameFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        btnAddHostName_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
 
         /// <summary>
         /// 添加主机名点击
@@ -158,8 +237,7 @@ namespace HostsManageTool.Winform
             var name = txtHostNameFilter.Text.Trim();
             if (!name.IsNullOrWhiteSpace())
             {
-                var h = new HostName();
-                h.Name = name;
+                var h = new HostName {Name = name};
 
                 try
                 {
@@ -204,16 +282,69 @@ namespace HostsManageTool.Winform
                 return;
 
             var hostip = UserHostManager.Instance.FindRedirectByHostName(name);
-            if (hostip != null)
-            {
-                txtCurrent.Text = hostip.IpAddress;
-            }
-            else
-            {
-                txtCurrent.Text = "";
-            }
+            txtCurrent.Text = hostip != null ? hostip.IpAddress : "";
         }
 
+        /// <summary>
+        /// 主机名清除按钮点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnClearHostName_Click(object sender, EventArgs e)
+        {
+            txtHostNameFilter.Clear();
+            txtHostNameFilter.Focus();
+            EnableControl(sender);
+        }
+
+        /// <summary>
+        /// 主机名列表快速过滤
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtHostNameFilter_TextChanged(object sender, EventArgs e)
+        {
+            var txt = txtHostNameFilter.Text.Trim();
+            _hostNamesSerch.Clear();
+            _hostNamesSerch.AddRange(txt.IsNullOrWhiteSpace()
+                ? _hostNames.OrderBy(d => d.Name)
+                : _hostNames.Where(d => d.Name.Contains(txt)));
+            SetHostNameBinding(_hostNamesSerch);
+            lstHostName.SelectedIndex = _hostNamesSerch.Count > 0 ? 0 : -1;
+
+        }
+
+        /// <summary>
+        /// 删除主机名点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDeleteHostName_Click(object sender, EventArgs e)
+        {
+            var hostname = lstHostName.SelectedItem as HostName;
+            if (hostname != null)
+            {
+                if (MessageBox.Show(Resources.DeleteConfirmMessage, Resources.DeleteConfirmMessageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                    DialogResult.OK)
+                {
+
+                    var n = UserHostManager.Instance.RemoveHostName(hostname);
+                    if (n == 0)
+                    {
+                        Message("移除失败");
+                    }
+                    else
+                    {
+                        LoadHostNameData();
+                    }
+                }
+            }
+            EnableControl(sender);
+        }
+
+        #endregion
+
+        #region Ip列表操作
         /// <summary>
         /// Ip列表改变
         /// </summary>
@@ -278,13 +409,12 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
-        private void btnClearHostName_Click(object sender, EventArgs e)
-        {
-            txtHostNameFilter.Clear();
-            txtHostNameFilter.Focus();
-            EnableControl(sender);
-        }
 
+        /// <summary>
+        /// Ip清除按钮点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnClearIp_Click(object sender, EventArgs e)
         {
             txtIpFilter.Clear();
@@ -292,6 +422,11 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// 指向按钮点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDirect_Click(object sender, EventArgs e)
         {
             var curr = txtCurrent.Text.Trim();
@@ -327,65 +462,35 @@ namespace HostsManageTool.Winform
                 var hostname = lstHostName.SelectedItem as HostName;
                 if (hostname != null)
                 {
-                    UserHostManager.Instance.RemoveHostDirect(hostname);
-                    LoadHostNameData(hostname.Id);
-                }
-                else
-                {
-                    Message("取消失败");
-                }
-            }
-            EnableControl(sender);
-        }
-
-        private void txtCurrent_TextChanged(object sender, EventArgs e)
-        {
-            var curr = txtCurrent.Text.Trim();
-            if (curr.IsNullOrWhiteSpace())
-            {
-                btnDirect.Text = "指向选中Ip";
-            }
-            else
-            {
-                btnDirect.Text = "取消指向Ip";
-            }
-            EnableControl(sender);
-        }
-
-        private void EnableControl(object s)
-        {
-            ExtentionClass.EnableControl(s);
-        }
-
-        private void btnDeleteHostName_Click(object sender, EventArgs e)
-        {
-            var hostname = lstHostName.SelectedItem as HostName;
-            if (hostname != null)
-            {
-                if (MessageBox.Show("确认删除此条信息？删除后不可恢复！", "删除确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
-                    DialogResult.OK)
-                {
-
-                    var n = UserHostManager.Instance.RemoveHostName(hostname);
-                    if (n == 0)
+                    var n = UserHostManager.Instance.RemoveHostDirect(hostname);
+                    if (n > 0)
                     {
-                        Message("移除失败");
+                        LoadHostNameData(hostname.Id);
                     }
                     else
                     {
-                        LoadHostNameData();
+                        Message("取消失败");
                     }
+                }
+                else
+                {
+                    Message("取消的对象不存在");
                 }
             }
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// 删除Ip点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDeleteIp_Click(object sender, EventArgs e)
         {
             var ip = lstIp.SelectedItem as HostIp;
             if (ip != null)
             {
-                if (MessageBox.Show("确认删除此条信息？删除后不可恢复！", "删除确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                if (MessageBox.Show(Resources.DeleteConfirmMessage, Resources.DeleteConfirmMessageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
                     DialogResult.OK)
                 {
                     try
@@ -410,39 +515,27 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
-        private void txtHostNameFilter_TextChanged(object sender, EventArgs e)
-        {
-            var txt = txtHostNameFilter.Text.Trim();
-            _hostNamesSerch.Clear();
-            if (txt.IsNullOrWhiteSpace())
-            {
-                _hostNamesSerch.AddRange(_hostNames.OrderBy(d => d.Name));
-            }
-            else
-            {
-                _hostNamesSerch.AddRange(_hostNames.Where(d => d.Name.Contains(txt)));
-            }
-            SetHostNameBinding(_hostNamesSerch);
-            lstHostName.SelectedIndex = _hostNamesSerch.Count > 0 ? 0 : -1;
-
-        }
-
+        /// <summary>
+        /// Ip列表快速过滤
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void txtIpFilter_TextChanged(object sender, EventArgs e)
         {
             var txt = txtIpFilter.Text.Trim();
             _hostIpsSearch.Clear();
-            if (txt.IsNullOrWhiteSpace())
-            {
-                _hostIpsSearch.AddRange(_hostIps.OrderBy(d => d.IpAddress));
-            }
-            else
-            {
-                _hostIpsSearch.AddRange(_hostIps.Where(d => d.IpAddress.Contains(txt)));
-            }
+            _hostIpsSearch.AddRange(txt.IsNullOrWhiteSpace()
+                ? _hostIps.OrderBy(d => d.IpAddress)
+                : _hostIps.Where(d => d.IpAddress.Contains(txt)));
             SetHostIpBinding(_hostIpsSearch);
             lstIp.SelectedIndex = _hostIpsSearch.Count > 0 ? 0 : -1;
         }
 
+        /// <summary>
+        /// Ip快速过滤输入限制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void txtIpFilter_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar) && e.KeyChar != '.')
@@ -451,10 +544,86 @@ namespace HostsManageTool.Winform
             }
         }
 
+        /// <summary>
+        /// ip列表快捷键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lstIp_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Delete:
+                        btnDeleteIp_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ip快速过滤快捷键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtIpFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        btnAddIp_Click(null, null);
+                        e.Handled = true;
+                        break;
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// 当前指向文本改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtCurrent_TextChanged(object sender, EventArgs e)
+        {
+            var curr = txtCurrent.Text.Trim();
+            btnDirect.Text = curr.IsNullOrWhiteSpace() ? "指向选中Ip" : "取消指向Ip";
+            EnableControl(sender);
+        }
+
+        #endregion
+
+        #region hosts源操作
+
+        /// <summary>
+        /// hosts源列表双击编辑 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lstSource_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = lstSource.IndexFromPoint(e.Location);
+            if (index != ListBox.NoMatches)
+            {
+                btnEditSource_Click(null, null);
+            }
+        }
+
+
+        /// <summary>
+        /// 添加hosts源点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnAddSource_Click(object sender, EventArgs e)
         {
             var form = new SourceEditForm();
-            form.Text = "添加Hosts源";
+            form.Text = @"添加Hosts源";
             var re = form.ShowDialog();
             switch (re)
             {
@@ -489,12 +658,17 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// 删除hosts源点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDeleteSource_Click(object sender, EventArgs e)
         {
             var source = lstSource.SelectedItem as HostsSource;
             if (source != null)
             {
-                if (MessageBox.Show("确认删除此条信息？删除后不可恢复！", "删除确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                if (MessageBox.Show(Resources.DeleteConfirmMessage, Resources.DeleteConfirmMessageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
                     DialogResult.OK)
                 {
                     try
@@ -515,14 +689,21 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// 编辑hosts源点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnEditSource_Click(object sender, EventArgs e)
         {
             var source = lstSource.SelectedItem as HostsSource;
             if (source != null)
             {
-                var form = new SourceEditForm();
-                form.Source = source;
-                form.Text = "添加Hosts源";
+                var form = new SourceEditForm
+                {
+                    Source = source,
+                    Text = @"添加Hosts源"
+                };
                 var re = form.ShowDialog();
                 switch (re)
                 {
@@ -554,6 +735,11 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// 禁用hosts源点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDisableEnable_Click(object sender, EventArgs e)
         {
             var s = lstSource.SelectedItem as HostsSource;
@@ -575,6 +761,11 @@ namespace HostsManageTool.Winform
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// hosts源列表选择改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lstSource_SelectedIndexChanged(object sender, EventArgs e)
         {
             var s = lstSource.SelectedItem as HostsSource;
@@ -584,25 +775,10 @@ namespace HostsManageTool.Winform
             }
         }
 
-        private void ElementChange<T>(List<T> list, int index, int count)
-        {
-            if (index >= list.Count || index < 0)
-            {
-                return;
-            }
-            var temp = list[index];
-
-            var newindex = index + count;
-            if (newindex >= list.Count || newindex < 0)
-            {
-                return;
-            }
-
-            list[index] = list[newindex];
-            list[newindex] = temp;
-
-        }
-
+        /// <summary>
+        /// hosts源列表上移下移
+        /// </summary>
+        /// <param name="pos"></param>
         private void ChangeSequence(int pos)
         {
             var sourceNow = lstSource.SelectedItem as HostsSource;
@@ -636,18 +812,33 @@ namespace HostsManageTool.Winform
             }
         }
 
+        /// <summary>
+        /// hosts源列表上移点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnUpSource_Click(object sender, EventArgs e)
         {
             ChangeSequence(-1);
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// hosts源列表下移点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDownSource_Click(object sender, EventArgs e)
         {
             ChangeSequence(1);
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// hosts源列表快捷键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lstSource_KeyDown(object sender, KeyEventArgs e)
         {
             if (!e.Control && !e.Alt && !e.Shift)
@@ -655,7 +846,7 @@ namespace HostsManageTool.Winform
                 switch (e.KeyCode)
                 {
                     case Keys.Enter:
-                        btnEditSource_Click(null, null); ;
+                        btnEditSource_Click(null, null);
                         e.Handled = true;
                         break;
                     case Keys.Delete:
@@ -676,87 +867,35 @@ namespace HostsManageTool.Winform
                 e.Handled = true;
             }
         }
+        #endregion
 
-        private void lstIp_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!e.Control && !e.Alt && !e.Shift)
-            {
-                switch (e.KeyCode)
-                {
-                    case Keys.Delete:
-                        btnDeleteIp_Click(null, null);
-                        e.Handled = true;
-                        break;
+        #region 应用hosts文件操作
 
-                }
-            }
-        }
-
-        private void lstHostName_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!e.Control && !e.Alt && !e.Shift)
-            {
-                switch (e.KeyCode)
-                {
-                    case Keys.Delete:
-                        btnDeleteHostName_Click(null, null);
-                        e.Handled = true;
-                        break;
-
-                }
-            }
-        }
-
-        private void txtHostNameFilter_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!e.Control && !e.Alt && !e.Shift)
-            {
-                switch (e.KeyCode)
-                {
-                    case Keys.Enter:
-                        btnAddHostName_Click(null, null);
-                        e.Handled = true;
-                        break;
-
-                }
-            }
-        }
-
-        private void txtIpFilter_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!e.Control && !e.Alt && !e.Shift)
-            {
-                switch (e.KeyCode)
-                {
-                    case Keys.Enter:
-                        btnAddIp_Click(null, null);
-                        e.Handled = true;
-                        break;
-
-                }
-            }
-        }
-
+        /// <summary>
+        /// 应用hosts文件点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnApplyToHosts_Click(object sender, EventArgs e)
         {
             new Thread(() =>
             {
                 try
                 {
-                    lblApplyMsgMessage("获取用户hosts配置...");
+                    LblApplyMsgMessage("获取用户hosts配置...");
                     var dicUser = UserHostManager.Instance.GetUserDictionary();
 
-                    lblApplyMsgMessage("下载远程hosts配置...");
+                    LblApplyMsgMessage("下载远程hosts配置...");
                     var dicRemote = HostsSourceManager.Instance.GetRemoteDictionary();
 
-                    lblApplyMsgMessage("缓存远程hosts配置...");
+                    LblApplyMsgMessage("缓存远程hosts配置...");
 
                     HostsSourceManager.Instance.WriteRemoteDicBak(dicRemote);
                     //File.WriteAllLines(
                     //    ExtentionClass.ApplicationPath + "remoteback.txt",
                     //    dicRemote.Select(pair => $"{pair.Value}\t{pair.Key}"));
 
-                    lblApplyMsgMessage("混合hosts配置...");
+                    LblApplyMsgMessage("混合hosts配置...");
                     foreach (KeyValuePair<string, string> pair in dicRemote)
                     {
                         if (!dicUser.ContainsKey(pair.Key))
@@ -773,14 +912,14 @@ namespace HostsManageTool.Winform
                     };
                     listDefault.AddRange(dicUser.Select(pair => $"{pair.Value}\t{pair.Key}"));
 
-                    lblApplyMsgMessage("备份Hosts文件...");
+                    LblApplyMsgMessage("备份Hosts文件...");
 
                     File.Copy(@"C:\windows\system32\drivers\etc\hosts", ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
                     File.Delete(@"C:\windows\system32\drivers\etc\hosts");
-                    lblApplyMsgMessage("创建新的Hosts文件...");
+                    LblApplyMsgMessage("创建新的Hosts文件...");
                     File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
 
-                    lblApplyMsgMessage("完成...");
+                    LblApplyMsgMessage("完成...");
                 }
                 catch (HostSourceFalseException ex)
                 {
@@ -793,9 +932,11 @@ namespace HostsManageTool.Winform
             .Start();
         }
 
-
-
-        private void lblApplyMsgMessage(string msg)
+        /// <summary>
+        /// 应用hosts消息
+        /// </summary>
+        /// <param name="msg"></param>
+        private void LblApplyMsgMessage(string msg)
         {
             if (txtLog.InvokeRequired)
             {
@@ -806,19 +947,22 @@ namespace HostsManageTool.Winform
             }
         }
 
+        /// <summary>
+        /// 应用hosts文件（仅用户）点击
+        /// </summary>
         private void btnApplyOnlyUser_Click(object sender, EventArgs e)
         {
             new Thread(() =>
             {
                 try
                 {
-                    lblApplyMsgMessage("获取用户hosts配置...");
+                    LblApplyMsgMessage("获取用户hosts配置...");
                     var dicUser = UserHostManager.Instance.GetUserDictionary();
 
-                    lblApplyMsgMessage("读取远程hosts配置缓存...");
+                    LblApplyMsgMessage("读取远程hosts配置缓存...");
                     var dicRemote = HostsSourceManager.Instance.ReadRemoteDicBak();
 
-                    lblApplyMsgMessage("混合hosts配置...");
+                    LblApplyMsgMessage("混合hosts配置...");
                     foreach (KeyValuePair<string, string> pair in dicRemote ?? new Dictionary<string, string>())
                     {
                         if (!dicUser.ContainsKey(pair.Key))
@@ -835,14 +979,14 @@ namespace HostsManageTool.Winform
                     };
                     listDefault.AddRange(dicUser.Select(pair => $"{pair.Value}\t{pair.Key}"));
 
-                    lblApplyMsgMessage("备份Hosts文件...");
+                    LblApplyMsgMessage("备份Hosts文件...");
 
                     File.Copy(@"C:\windows\system32\drivers\etc\hosts", ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
                     File.Delete(@"C:\windows\system32\drivers\etc\hosts");
-                    lblApplyMsgMessage("创建新的Hosts文件...");
+                    LblApplyMsgMessage("创建新的Hosts文件...");
                     File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
 
-                    lblApplyMsgMessage("完成...");
+                    LblApplyMsgMessage("完成...");
                 }
                 catch (HostSourceFalseException ex)
                 {
@@ -855,14 +999,7 @@ namespace HostsManageTool.Winform
             .Start();
         }
 
+        #endregion
 
-        private void lstSource_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            int index = lstSource.IndexFromPoint(e.Location);
-            if (index != ListBox.NoMatches)
-            {
-                btnEditSource_Click(null, null);
-            }
-        }
     }
 }

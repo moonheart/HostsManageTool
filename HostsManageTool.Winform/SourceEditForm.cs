@@ -13,19 +13,33 @@ namespace HostsManageTool.Winform
             InitializeComponent();
         }
 
-        private void btnCancel_Click(object sender, System.EventArgs e)
+        /// <summary>
+        /// 取消点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
             EnableControl(sender);
         }
 
+        /// <summary>
+        /// 启用控件
+        /// </summary>
+        /// <param name="s"></param>
         private void EnableControl(object s)
         {
             ExtentionClass.EnableControl(s);
         }
 
-        private void btnConfirm_Click(object sender, System.EventArgs e)
+        /// <summary>
+        /// 确认点击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnConfirm_Click(object sender, EventArgs e)
         {
             try
             {
@@ -35,8 +49,8 @@ namespace HostsManageTool.Winform
                 var r = new Uri(txtUrl.Text);
                 Source.Url = r.ToString();
                 Source.Name = txtName.Text.Trim();
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch (UriFormatException)
             {
@@ -55,6 +69,11 @@ namespace HostsManageTool.Winform
             MessageBox.Show(message);
         }
 
+        /// <summary>
+        /// 数据加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SourceEditForm_Load(object sender, EventArgs e)
         {
             if (Source != null)

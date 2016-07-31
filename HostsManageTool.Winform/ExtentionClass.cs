@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using HostsManageTool.Winform.Sqlite;
 
 namespace HostsManageTool.Winform
 {
     public static class ExtentionClass
     {
         /// <summary>
-        /// 应用程序路径
+        /// 获取应用程序路径
         /// </summary>
-        public static string ApplicationPath = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+        public static readonly string ApplicationPath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+
         /// <summary>
         /// 获取连接字符串
         /// </summary>
@@ -40,26 +36,25 @@ namespace HostsManageTool.Winform
         }
 
         /// <summary>
-        /// 获取SqliteHelper
+        /// 是否是Ip地址
         /// </summary>
-        public static SQLiteHelper SqLiteHelper
-        {
-            get
-            {
-                var conn = new SQLiteCommand(new SQLiteConnection(ConnectinString));
-                conn.Connection.Open();
-                return new SQLiteHelper(conn);
-            }
-        }
-
+        /// <param name="ip"></param>
+        /// <returns></returns>
         public static bool IsIpAddress(this string ip)
         {
             return Regex.IsMatch(ip,
                 @"((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))");
         }
 
-        public static char[] IpStartStrings = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        /// <summary>
+        /// Ip开头字符串
+        /// </summary>
+        public static readonly char[] IpStartStrings = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
+        /// <summary>
+        /// 启用控件
+        /// </summary>
+        /// <param name="s"></param>
         public static void EnableControl(object s)
         {
             var sender = s as Control;
@@ -79,14 +74,18 @@ namespace HostsManageTool.Winform
             }
         }
 
-
+        /// <summary>
+        /// IsNullOrWhiteSpace
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static bool IsNullOrWhiteSpace(this string s)
         {
             return string.IsNullOrWhiteSpace(s);
         }
 
         /// <summary>
-        /// 现在远程hosts到字符串数组
+        /// 现在远程hosts到字典
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
@@ -97,12 +96,11 @@ namespace HostsManageTool.Winform
 
             var request = (HttpWebRequest)WebRequest.Create(url);
 
-            Stream rs;
             try
             {
                 using (var response = request.GetResponse())
                 {
-                    rs = response.GetResponseStream();
+                    var rs = response.GetResponseStream();
                     if (rs != null)
                     {
                         string str;
@@ -129,15 +127,18 @@ namespace HostsManageTool.Winform
             }
             catch (WebException ex)
             {
-
                 var exc = new HostSourceFalseException(url, ex.Message);
-
                 throw exc;
             }
             return null;
         }
 
-
+        /// <summary>
+        /// 写入二进制文件到对象
+        /// </summary>
+        /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="data">要写入的对象</param>
+        /// <param name="path">路径</param>
         public static void WriteBinary<T>(T data, string path)
             where T : ISerializable
         {
@@ -156,6 +157,12 @@ namespace HostsManageTool.Winform
             }
         }
 
+        /// <summary>
+        /// 读取二进制文件到对象
+        /// </summary>
+        /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
         public static T ReadBinary<T>(string path)
             where T : ISerializable
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
@@ -19,8 +18,12 @@ namespace HostsManageTool.Winform.Bll
                 return new SQLiteHelper(conn);
             }
         }
-        private static HostsSourceManager _in = new HostsSourceManager();
-        public static HostsSourceManager Instance { get { return _in; } }
+
+        /// <summary>
+        /// 获取单例
+        /// </summary>
+        public static HostsSourceManager Instance { get; } = new HostsSourceManager();
+
         private HostsSourceManager()
         {
 
@@ -78,7 +81,6 @@ namespace HostsManageTool.Winform.Bll
             throw new ItemOperationFaildException();
         }
 
-
         /// <summary>
         /// 更新
         /// </summary>
@@ -96,6 +98,11 @@ namespace HostsManageTool.Winform.Bll
             return Helper.Execute(sql);
         }
 
+        /// <summary>
+        /// 通过Url查找
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public HostsSource FindByUrl(string url)
         {
             var sql = $"select * from hostssource where Url = '{url}'";
@@ -141,10 +148,7 @@ namespace HostsManageTool.Winform.Bll
             var sql = "select * from hostssource";
             var dt = Helper.Select(sql);
             return dt?.AsEnumerable().Select(DataRowToHostsSource).ToList();
-
-            //throw new NotImplementedException();
         }
-
 
         /// <summary>
         /// 切换状态
@@ -165,7 +169,6 @@ namespace HostsManageTool.Winform.Bll
         }
 
 
-
         public HostsSource DataRowToHostsSource(DataRow row)
         {
             var source = new HostsSource();
@@ -176,12 +179,17 @@ namespace HostsManageTool.Winform.Bll
             return source;
         }
 
+        /// <summary>
+        /// 获取远程hosts
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<string, string> GetRemoteDictionary()
         {
             var dic = new Dictionary<string, string>();
             var list = GetAllHostsSource();
             if (list != null)
             {
+                //排序
                 list = list.Where(d => d.IsEnabled == 1).OrderBy(d => d.Id).ToList();
                 foreach (var hostsSource in list)
                 {

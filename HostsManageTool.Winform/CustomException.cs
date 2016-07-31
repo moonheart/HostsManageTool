@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HostsManageTool.Winform
 {
@@ -38,6 +33,9 @@ namespace HostsManageTool.Winform
         public ItemOperationFaildException() : base("操作失败") { }
     }
 
+    /// <summary>
+    /// 下载hosts失败
+    /// </summary>
     public class HostSourceFalseException : Exception
     {
         public string RequestUrl { get; set; }

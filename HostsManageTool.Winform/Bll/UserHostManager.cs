@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HostsManageTool.Winform.Model;
 using HostsManageTool.Winform.Sqlite;
 
@@ -22,15 +19,23 @@ namespace HostsManageTool.Winform.Bll
             }
         }
 
-        private static UserHostManager _in = new UserHostManager();
-        public static UserHostManager Instance { get { return _in; } }
+        /// <summary>
+        /// 获取单例
+        /// </summary>
+        public static UserHostManager Instance { get; } = new UserHostManager();
+
         private UserHostManager()
         {
 
         }
 
         #region 主机名
-
+        
+        /// <summary>
+        /// 通过Id查找主机名
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HostName FindHostNameById(int id)
         {
             var sql = $"select * from hostname where id = {id}";
@@ -38,12 +43,6 @@ namespace HostsManageTool.Winform.Bll
             return dt?.AsEnumerable().Select(DataRowToHostName).FirstOrDefault();
         }
 
-        public HostIp FindRedirectByHostName(HostName hostName)
-        {
-            var sql = $"select t2.* from HostToIp t1, HostIp t2 where t1.IpId=t2.Id and t1.NameId={hostName.Id} ";
-            var dt = Helper.Select(sql);
-            return dt?.AsEnumerable().Select(DataRowToHostIp).FirstOrDefault();
-        }
 
         /// <summary>
         /// 添加Ip指向主机
@@ -76,7 +75,7 @@ namespace HostsManageTool.Winform.Bll
         /// <returns></returns>
         public HostName AddHostName(HostName name)
         {
-            var sql1 = string.Format("select Id from hostname where name='{0}' limit 1", name.Name);
+            var sql1 = $"select Id from hostname where name='{name.Name}' limit 1";
             var obj = Helper.ExecuteScalar(sql1);
             int id;
             int.TryParse(obj + "", out id);
@@ -131,15 +130,15 @@ namespace HostsManageTool.Winform.Bll
         public int AddHostDirect(HostName name, HostIp ip)
         {
             //先查找
-            var sql = string.Format("select * from HostToIp where NameId={0}", name.Id);
+            var sql = $"select * from HostToIp where NameId={name.Id}";
             var dt = Helper.Select(sql);
             if (dt != null && dt.Rows.Count > 0)
             {
-                sql = string.Format("update hosttoip set Ipid={0} where NameId={1}", ip.Id, name.Id);
+                sql = $"update hosttoip set Ipid={ip.Id} where NameId={name.Id}";
             }
             else
             {
-                sql = string.Format("insert into HostToIp(NameId,IpId) values({0},{1})", name.Id, ip.Id);
+                sql = $"insert into HostToIp(NameId,IpId) values({name.Id},{ip.Id})";
             }
             return Helper.Execute(sql);
         }
@@ -148,16 +147,32 @@ namespace HostsManageTool.Winform.Bll
         /// 移除host指向
         /// </summary>
         /// <param name="hostName"></param>
-        public void RemoveHostDirect(HostName hostName)
+        public int RemoveHostDirect(HostName hostName)
         {
-            var sql = string.Format("delete from HostToIp where NameId={0}", hostName.Id);
-            var n = Helper.Execute(sql);
+            var sql = $"delete from HostToIp where NameId={hostName.Id}";
+            return Helper.Execute(sql);
         }
 
         #endregion
 
         #region Ip
 
+        /// <summary>
+        /// 通过主机名查找Ip
+        /// </summary>
+        /// <param name="hostName"></param>
+        /// <returns></returns>
+        public HostIp FindRedirectByHostName(HostName hostName)
+        {
+            var sql = $"select t2.* from HostToIp t1, HostIp t2 where t1.IpId=t2.Id and t1.NameId={hostName.Id} ";
+            var dt = Helper.Select(sql);
+            return dt?.AsEnumerable().Select(DataRowToHostIp).FirstOrDefault();
+        }
+        /// <summary>
+        /// 通过Id查找Ip
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HostIp FindHostIpById(int id)
         {
             var sql = $"select * from hostip where id= {id}";
@@ -187,14 +202,14 @@ namespace HostsManageTool.Winform.Bll
             conn.Connection.Open();
             var h = new SQLiteHelper(conn);
 
-            var sql = string.Format("insert into hostip(IpAddress) values('{0}')", ip.IpAddress);
+            var sql = $"insert into hostip(IpAddress) values('{ip.IpAddress}')";
             var n = h.Execute(sql);
             if (n > 0)
             {
                 sql = "select last_insert_rowid() as Id from hostip;";
                 var id = h.ExecuteScalar<int>(sql);
 
-                sql = string.Format("select * from hostip where id = {0}", id);
+                sql = $"select * from hostip where id = {id}";
                 var dt = h.Select(sql);
                 return dt?.AsEnumerable().Select(DataRowToHostIp).FirstOrDefault();
             }
@@ -225,26 +240,38 @@ namespace HostsManageTool.Winform.Bll
 
         public HostName DataRowToHostName(DataRow row)
         {
-            var name = new HostName();
-            name.Id = int.Parse(row["Id"] + "");
-            name.Name = row["Name"] + "";
+            var name = new HostName
+            {
+                Id = int.Parse(row["Id"] + ""),
+                Name = row["Name"] + ""
+            };
             return name;
         }
+
         public HostIp DataRowToHostIp(DataRow row)
         {
-            var ip = new HostIp();
-            ip.Id = int.Parse(row["Id"] + "");
-            ip.IpAddress = row["IpAddress"] + "";
-            return ip;
-        }
-        public HostToIp DataRowToHostToIp(DataRow row)
-        {
-            var ip = new HostToIp();
-            ip.IpId = int.Parse(row["IpId"] + "");
-            ip.NameId = int.Parse(row["NameId"] + "");
+            var ip = new HostIp
+            {
+                Id = int.Parse(row["Id"] + ""),
+                IpAddress = row["IpAddress"] + ""
+            };
             return ip;
         }
 
+        public HostToIp DataRowToHostToIp(DataRow row)
+        {
+            var ip = new HostToIp
+            {
+                IpId = int.Parse(row["IpId"] + ""),
+                NameId = int.Parse(row["NameId"] + "")
+            };
+            return ip;
+        }
+
+        /// <summary>
+        /// 获取用户hosts指向字典
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<string, string> GetUserDictionary()
         {
             var dic = new Dictionary<string, string>();

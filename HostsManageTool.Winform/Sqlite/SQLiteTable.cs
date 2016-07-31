@@ -1,6 +1,4 @@
-﻿using System.Data.SQLite;
-
-namespace HostsManageTool.Winform.Sqlite
+﻿namespace HostsManageTool.Winform.Sqlite
 {
     public class SQLiteTable
     {

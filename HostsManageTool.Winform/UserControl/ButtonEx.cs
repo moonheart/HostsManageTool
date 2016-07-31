@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HostsManageTool.Winform.UserControl
 {
     public class ButtonEx : Button
     {
-
-        //public delegate void OperationFinishedDelegate();
-
-        //public OperationFinishedDelegate OperationFinishedEvent;
+        /// <summary>
+        /// 点击后禁用按钮，防止重复操作
+        /// </summary>
+        /// <param name="e"></param>
 
         protected override void OnClick(EventArgs e)
         {
