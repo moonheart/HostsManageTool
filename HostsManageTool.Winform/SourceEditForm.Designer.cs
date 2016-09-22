@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.txtName = new HostsManageTool.Winform.UserControl.TextBoxEx();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtUrl = new System.Windows.Forms.TextBox();
+            this.txtUrl = new HostsManageTool.Winform.UserControl.TextBoxEx();
             this.btnConfirm = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnCancel = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.SuspendLayout();
@@ -117,9 +117,9 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtName;
+        private HostsManageTool.Winform.UserControl.TextBoxEx txtName;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtUrl;
+        private HostsManageTool.Winform.UserControl.TextBoxEx txtUrl;
         private UserControl.ButtonEx btnConfirm;
         private UserControl.ButtonEx btnCancel;
     }

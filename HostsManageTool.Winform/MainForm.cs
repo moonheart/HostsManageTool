@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using HostsManageTool.Winform.Bll;
@@ -237,7 +238,7 @@ namespace HostsManageTool.Winform
             var name = txtHostNameFilter.Text.Trim();
             if (!name.IsNullOrWhiteSpace())
             {
-                var h = new HostName {Name = name};
+                var h = new HostName { Name = name };
 
                 try
                 {
@@ -449,6 +450,8 @@ namespace HostsManageTool.Winform
                     if (n > 0)
                     {
                         LoadHostNameData(hostname.Id);
+                        if (chkAutoApply.Checked)
+                            btnApplyOnlyUser_Click(null, null);
                     }
                     else
                     {
@@ -466,6 +469,8 @@ namespace HostsManageTool.Winform
                     if (n > 0)
                     {
                         LoadHostNameData(hostname.Id);
+                        if (chkAutoApply.Checked)
+                            btnApplyOnlyUser_Click(null, null);
                     }
                     else
                     {
@@ -913,11 +918,15 @@ namespace HostsManageTool.Winform
                     listDefault.AddRange(dicUser.Select(pair => $"{pair.Value}\t{pair.Key}"));
 
                     LblApplyMsgMessage("备份Hosts文件...");
-
-                    File.Copy(@"C:\windows\system32\drivers\etc\hosts", ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
-                    File.Delete(@"C:\windows\system32\drivers\etc\hosts");
+                    if (File.Exists(@"C:\windows\system32\drivers\etc\hosts"))
+                    {
+                        File.Copy(@"C:\windows\system32\drivers\etc\hosts",
+                            ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + listDefault.GetHashCode() + ".bak");
+                        File.Delete(@"C:\windows\system32\drivers\etc\hosts");
+                    }
                     LblApplyMsgMessage("创建新的Hosts文件...");
-                    File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
+                    File.WriteAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
+                    // File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
 
                     LblApplyMsgMessage("完成...");
                 }
@@ -925,7 +934,10 @@ namespace HostsManageTool.Winform
                 {
                     Message("下载Hosts时失败：" + ex.RequestUrl + "  " + ex.Message);
                 }
-
+                catch (IOException ex)
+                {
+                    Message(ex.Message);
+                }
                 EnableControl(sender);
             })
             { IsBackground = true }
@@ -981,10 +993,25 @@ namespace HostsManageTool.Winform
 
                     LblApplyMsgMessage("备份Hosts文件...");
 
-                    File.Copy(@"C:\windows\system32\drivers\etc\hosts", ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".bak");
-                    File.Delete(@"C:\windows\system32\drivers\etc\hosts");
+                    if (File.Exists(@"C:\windows\system32\drivers\etc\hosts"))
+                    {
+                        File.Copy(@"C:\windows\system32\drivers\etc\hosts",
+                            ExtentionClass.ApplicationPath + "hosts_" + DateTime.Now.ToString("yyyyMMddhhmmss_") + ExtentionClass.GetRandomStringLength10() + ".bak");
+                        File.Delete(@"C:\windows\system32\drivers\etc\hosts");
+                    }
+                    var files = Directory.GetFiles(ExtentionClass.ApplicationPath)
+                    .Where(d => Regex.IsMatch(d, @"hosts_[0-9]{14}_[A-Z0-9]{10}")).ToList();
+                    if (files.Count > 5)
+                    {
+                        files = files.OrderByDescending(d => d).Skip(5).ToList();
+                        foreach (var file in files)
+                        {
+                            File.Delete(file);
+                        }
+                    }
+
                     LblApplyMsgMessage("创建新的Hosts文件...");
-                    File.AppendAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
+                    File.WriteAllLines(@"C:\windows\system32\drivers\etc\hosts", listDefault);
 
                     LblApplyMsgMessage("完成...");
                 }
@@ -992,7 +1019,10 @@ namespace HostsManageTool.Winform
                 {
                     Message("下载Hosts时失败：" + ex.RequestUrl + "  " + ex.Message);
                 }
-
+                catch (IOException ex)
+                {
+                    Message(ex.Message);
+                }
                 EnableControl(sender);
             })
             { IsBackground = true }
@@ -1001,5 +1031,9 @@ namespace HostsManageTool.Winform
 
         #endregion
 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
     }
 }

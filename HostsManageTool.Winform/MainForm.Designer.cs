@@ -29,22 +29,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.lstHostName = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtHostNameFilter = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.lstIp = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtIpFilter = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.txtCurrent = new System.Windows.Forms.TextBox();
             this.lstSource = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.txtLog = new System.Windows.Forms.TextBox();
+            this.txtLog = new HostsManageTool.Winform.UserControl.TextBoxEx();
             this.btnApplyOnlyUser = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnApplyToHosts = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnUpSource = new HostsManageTool.Winform.UserControl.ButtonEx();
@@ -54,12 +52,16 @@
             this.btnDeleteSource = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnAddSource = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnDirect = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.txtCurrent = new HostsManageTool.Winform.UserControl.TextBoxEx();
             this.btnDeleteIp = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnAddIp = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnDeleteHostName = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnClearIp = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnClearHostName = new HostsManageTool.Winform.UserControl.ButtonEx();
             this.btnAddHostName = new HostsManageTool.Winform.UserControl.ButtonEx();
+            this.txtIpFilter = new HostsManageTool.Winform.UserControl.TextBoxEx();
+            this.txtHostNameFilter = new HostsManageTool.Winform.UserControl.TextBoxEx();
+            this.chkAutoApply = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lstHostName
@@ -82,15 +84,6 @@
             this.label1.Size = new System.Drawing.Size(109, 19);
             this.label1.TabIndex = 1;
             this.label1.Text = "主机名列表";
-            // 
-            // txtHostNameFilter
-            // 
-            this.txtHostNameFilter.Location = new System.Drawing.Point(12, 57);
-            this.txtHostNameFilter.Name = "txtHostNameFilter";
-            this.txtHostNameFilter.Size = new System.Drawing.Size(166, 21);
-            this.txtHostNameFilter.TabIndex = 2;
-            this.txtHostNameFilter.TextChanged += new System.EventHandler(this.txtHostNameFilter_TextChanged);
-            this.txtHostNameFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHostNameFilter_KeyDown);
             // 
             // label2
             // 
@@ -121,20 +114,10 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "指向Ip列表";
             // 
-            // txtIpFilter
-            // 
-            this.txtIpFilter.Location = new System.Drawing.Point(272, 99);
-            this.txtIpFilter.Name = "txtIpFilter";
-            this.txtIpFilter.Size = new System.Drawing.Size(107, 21);
-            this.txtIpFilter.TabIndex = 2;
-            this.txtIpFilter.TextChanged += new System.EventHandler(this.txtIpFilter_TextChanged);
-            this.txtIpFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtIpFilter_KeyDown);
-            this.txtIpFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtIpFilter_KeyPress);
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(274, 84);
+            this.label4.Location = new System.Drawing.Point(274, 91);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(173, 12);
             this.label4.TabIndex = 3;
@@ -143,20 +126,11 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(276, 42);
+            this.label5.Location = new System.Drawing.Point(272, 49);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(89, 12);
             this.label5.TabIndex = 5;
             this.label5.Text = "当前主机指向：";
-            // 
-            // txtCurrent
-            // 
-            this.txtCurrent.Location = new System.Drawing.Point(274, 55);
-            this.txtCurrent.Name = "txtCurrent";
-            this.txtCurrent.ReadOnly = true;
-            this.txtCurrent.Size = new System.Drawing.Size(107, 21);
-            this.txtCurrent.TabIndex = 6;
-            this.txtCurrent.TextChanged += new System.EventHandler(this.txtCurrent_TextChanged);
             // 
             // lstSource
             // 
@@ -219,23 +193,23 @@
             // 
             // btnApplyOnlyUser
             // 
-            this.btnApplyOnlyUser.Font = new System.Drawing.Font("宋体", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnApplyOnlyUser.Font = new System.Drawing.Font("宋体", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnApplyOnlyUser.Location = new System.Drawing.Point(495, 268);
             this.btnApplyOnlyUser.Name = "btnApplyOnlyUser";
             this.btnApplyOnlyUser.Size = new System.Drawing.Size(270, 47);
             this.btnApplyOnlyUser.TabIndex = 15;
-            this.btnApplyOnlyUser.Text = "应用到Hosts文件(仅用户)";
+            this.btnApplyOnlyUser.Text = "应用到Hosts文件(使用上次远程缓存)";
             this.btnApplyOnlyUser.UseVisualStyleBackColor = true;
             this.btnApplyOnlyUser.Click += new System.EventHandler(this.btnApplyOnlyUser_Click);
             // 
             // btnApplyToHosts
             // 
-            this.btnApplyToHosts.Font = new System.Drawing.Font("宋体", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnApplyToHosts.Font = new System.Drawing.Font("宋体", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnApplyToHosts.Location = new System.Drawing.Point(495, 215);
             this.btnApplyToHosts.Name = "btnApplyToHosts";
             this.btnApplyToHosts.Size = new System.Drawing.Size(270, 47);
             this.btnApplyToHosts.TabIndex = 15;
-            this.btnApplyToHosts.Text = "应用到Hosts文件";
+            this.btnApplyToHosts.Text = "应用到Hosts文件(重新下载远程配置)";
             this.btnApplyToHosts.UseVisualStyleBackColor = true;
             this.btnApplyToHosts.Click += new System.EventHandler(this.btnApplyToHosts_Click);
             // 
@@ -301,13 +275,22 @@
             // 
             // btnDirect
             // 
-            this.btnDirect.Location = new System.Drawing.Point(385, 53);
+            this.btnDirect.Location = new System.Drawing.Point(385, 60);
             this.btnDirect.Name = "btnDirect";
             this.btnDirect.Size = new System.Drawing.Size(75, 23);
             this.btnDirect.TabIndex = 7;
             this.btnDirect.Text = "指向选中Ip";
             this.btnDirect.UseVisualStyleBackColor = true;
             this.btnDirect.Click += new System.EventHandler(this.btnDirect_Click);
+            // 
+            // txtCurrent
+            // 
+            this.txtCurrent.Location = new System.Drawing.Point(274, 62);
+            this.txtCurrent.Name = "txtCurrent";
+            this.txtCurrent.ReadOnly = true;
+            this.txtCurrent.Size = new System.Drawing.Size(107, 21);
+            this.txtCurrent.TabIndex = 6;
+            this.txtCurrent.TextChanged += new System.EventHandler(this.txtCurrent_TextChanged);
             // 
             // btnDeleteIp
             // 
@@ -341,7 +324,7 @@
             // 
             // btnClearIp
             // 
-            this.btnClearIp.Location = new System.Drawing.Point(385, 97);
+            this.btnClearIp.Location = new System.Drawing.Point(385, 104);
             this.btnClearIp.Name = "btnClearIp";
             this.btnClearIp.Size = new System.Drawing.Size(39, 23);
             this.btnClearIp.TabIndex = 4;
@@ -369,11 +352,43 @@
             this.btnAddHostName.UseVisualStyleBackColor = true;
             this.btnAddHostName.Click += new System.EventHandler(this.btnAddHostName_Click);
             // 
+            // txtIpFilter
+            // 
+            this.txtIpFilter.Location = new System.Drawing.Point(272, 106);
+            this.txtIpFilter.Name = "txtIpFilter";
+            this.txtIpFilter.Size = new System.Drawing.Size(107, 21);
+            this.txtIpFilter.TabIndex = 2;
+            this.txtIpFilter.TextChanged += new System.EventHandler(this.txtIpFilter_TextChanged);
+            this.txtIpFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtIpFilter_KeyDown);
+            this.txtIpFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtIpFilter_KeyPress);
+            // 
+            // txtHostNameFilter
+            // 
+            this.txtHostNameFilter.Location = new System.Drawing.Point(12, 57);
+            this.txtHostNameFilter.Name = "txtHostNameFilter";
+            this.txtHostNameFilter.Size = new System.Drawing.Size(166, 21);
+            this.txtHostNameFilter.TabIndex = 2;
+            this.txtHostNameFilter.TextChanged += new System.EventHandler(this.txtHostNameFilter_TextChanged);
+            this.txtHostNameFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHostNameFilter_KeyDown);
+            // 
+            // chkAutoApply
+            // 
+            this.chkAutoApply.AutoSize = true;
+            this.chkAutoApply.Checked = true;
+            this.chkAutoApply.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoApply.Location = new System.Drawing.Point(274, 33);
+            this.chkAutoApply.Name = "chkAutoApply";
+            this.chkAutoApply.Size = new System.Drawing.Size(198, 16);
+            this.chkAutoApply.TabIndex = 17;
+            this.chkAutoApply.Text = "更改指向时自动应用到Hosts文件";
+            this.chkAutoApply.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 480);
+            this.Controls.Add(this.chkAutoApply);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.btnApplyOnlyUser);
             this.Controls.Add(this.btnApplyToHosts);
@@ -406,10 +421,12 @@
             this.Controls.Add(this.lstIp);
             this.Controls.Add(this.lstHostName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Hosts管理";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -420,7 +437,7 @@
 
         private System.Windows.Forms.ListBox lstHostName;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtHostNameFilter;
+        private HostsManageTool.Winform.UserControl.TextBoxEx txtHostNameFilter;
         private System.Windows.Forms.Label label2;
         private HostsManageTool.Winform.UserControl.ButtonEx btnAddHostName;
         private HostsManageTool.Winform.UserControl.ButtonEx btnDeleteHostName;
@@ -428,12 +445,12 @@
         private System.Windows.Forms.Label label3;
         private HostsManageTool.Winform.UserControl.ButtonEx btnAddIp;
         private HostsManageTool.Winform.UserControl.ButtonEx btnDeleteIp;
-        private System.Windows.Forms.TextBox txtIpFilter;
+        private HostsManageTool.Winform.UserControl.TextBoxEx txtIpFilter;
         private System.Windows.Forms.Label label4;
         private HostsManageTool.Winform.UserControl.ButtonEx btnClearHostName;
         private HostsManageTool.Winform.UserControl.ButtonEx btnClearIp;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtCurrent;
+        private HostsManageTool.Winform.UserControl.TextBoxEx txtCurrent;
         private HostsManageTool.Winform.UserControl.ButtonEx btnDirect;
         private System.Windows.Forms.ListBox lstSource;
         private System.Windows.Forms.Label label6;
@@ -448,7 +465,8 @@
         private System.Windows.Forms.Label label9;
         private UserControl.ButtonEx btnApplyToHosts;
         private UserControl.ButtonEx btnApplyOnlyUser;
-        private System.Windows.Forms.TextBox txtLog;
+        private HostsManageTool.Winform.UserControl.TextBoxEx txtLog;
+        private System.Windows.Forms.CheckBox chkAutoApply;
     }
 }
 

@@ -18,6 +18,20 @@ namespace HostsManageTool.Winform
         /// </summary>
         public static readonly string ApplicationPath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
 
+        private static Random random = new Random();
+        public static string GetRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(
+                Enumerable.Repeat(chars, length)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public static string GetRandomStringLength10()
+        {
+            return GetRandomString(10);
+        }
+
         /// <summary>
         /// 获取连接字符串
         /// </summary>
@@ -49,7 +63,7 @@ namespace HostsManageTool.Winform
         /// <summary>
         /// Ip开头字符串
         /// </summary>
-        public static readonly char[] IpStartStrings = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        public static readonly char[] IpStartStrings = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
         /// <summary>
         /// 启用控件
