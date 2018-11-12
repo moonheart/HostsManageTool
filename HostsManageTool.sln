@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostsManageTool.Winform", "HostsManageTool.Winform\HostsManageTool.Winform.csproj", "{91A7D8D6-7027-41A0-8E9E-537446E3A6C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostsManageTool.Test", "HostsManageTool.Test\HostsManageTool.Test.csproj", "{4EB8FEF2-E620-43BE-A7DC-92D61970622A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostsManageTool.Nirvana", "HostsManageTool.Nirvana\HostsManageTool.Nirvana.csproj", "{40CAB7D2-E539-4065-98BA-4B7932A678F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{4EB8FEF2-E620-43BE-A7DC-92D61970622A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EB8FEF2-E620-43BE-A7DC-92D61970622A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EB8FEF2-E620-43BE-A7DC-92D61970622A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40CAB7D2-E539-4065-98BA-4B7932A678F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40CAB7D2-E539-4065-98BA-4B7932A678F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40CAB7D2-E539-4065-98BA-4B7932A678F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40CAB7D2-E539-4065-98BA-4B7932A678F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14E9044B-2CEC-45CF-9770-BA0751AB7C02}
 	EndGlobalSection
 EndGlobal
