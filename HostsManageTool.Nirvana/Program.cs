@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,7 +17,14 @@ namespace HostsManageTool.Nirvana
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch (Exception e)
+            {
+                File.AppendAllText("error.log", $"\r\n{DateTime.Now} {e.Message} \r\n{e.StackTrace}");
+            }
         }
     }
 }

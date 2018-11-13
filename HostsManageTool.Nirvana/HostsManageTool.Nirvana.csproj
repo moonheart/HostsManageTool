@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -64,6 +67,10 @@
     <Compile Include="Migrations\201811121404434_Mig1.Designer.cs">
       <DependentUpon>201811121404434_Mig1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811130556455_Mg2.cs" />
+    <Compile Include="Migrations\201811130556455_Mg2.Designer.cs">
+      <DependentUpon>201811130556455_Mg2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DataContext.cs" />
     <Compile Include="Models\Host.cs" />
@@ -83,6 +90,9 @@
     <EmbeddedResource Include="Migrations\201811121404434_Mig1.resx">
       <DependentUpon>201811121404434_Mig1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811130556455_Mg2.resx">
+      <DependentUpon>201811130556455_Mg2.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -93,6 +103,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
