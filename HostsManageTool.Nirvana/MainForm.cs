@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using HostsManageTool.Nirvana.Models;
 using HostsManageTool.Nirvana.Properties;
@@ -53,7 +54,7 @@ namespace HostsManageTool.Nirvana
         /// <summary>
         /// 加载主机名列表
         /// </summary>
-        /// <param name="selectedvalue">要选中的项Id</param>
+        /// <param name="select">要选中的项Id</param>
         private void LoadHostData(string select = null)
         {
             var list = _hosts = _db.Hosts.ToList();
@@ -64,7 +65,7 @@ namespace HostsManageTool.Nirvana
 
         /// <summary>
         /// 加载Ip列表
-        /// <param name="selectedvalue">要选中的项Id</param>
+        /// <param name="select">要选中的项Id</param>
         /// </summary>
         private void LoadHostIpData(string select = null)
         {
@@ -194,6 +195,9 @@ namespace HostsManageTool.Nirvana
                 {
                     _db.Hosts.Add(host);
                     _db.SaveChanges();
+                    _db.Dispose();
+                    _db = new DataContext();
+                    //_db.Hosts.Attach(host);
                     LoadHostData(name);
                 }
                 catch (Exception ex)
@@ -306,6 +310,7 @@ namespace HostsManageTool.Nirvana
                     }
                     else
                     {
+                        host = _db.Hosts.Attach(host);
                         host.Ips.Clear();
                         host.Ips.Add(ip);
                         _db.SaveChanges();
@@ -512,27 +517,25 @@ namespace HostsManageTool.Nirvana
         /// <param name="e"></param>
         private void btnApplyToHosts_Click(object sender, EventArgs e)
         {
-            new Thread(() =>
+            Task.Run(() =>
             {
+                var windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+                var hostsFile = Path.Combine(windows, @"system32\drivers\etc\hosts");
+                if (File.Exists(hostsFile))
                 {
-
-                    if (File.Exists(@"C:\windows\system32\drivers\etc\hosts"))
-                    {
-                        File.Delete(@"C:\windows\system32\drivers\etc\hosts");
-                    }
-
-                    var lines = _hosts.Where(d => d.Ips.Any()).Select(d => $"{d.Ips.First().IpAddress}\t{d.HostName}");
-
-                    LblApplyMsgMessage("创建新的Hosts文件...");
-                    File.WriteAllLines(@"C:\windows\system32\drivers\etc\hosts", lines);
-
-                    LblApplyMsgMessage("完成...");
+                    File.Delete(hostsFile);
                 }
 
+                var lines = _hosts.Where(d => d.Ips.Any())
+                    .Select(d => $"{d.Ips.First().IpAddress}\t{d.HostName}");
+
+                LblApplyMsgMessage("创建新的Hosts文件...");
+                //File.WriteAllLines(hostsFile, lines);
+
+                LblApplyMsgMessage("完成...");
+
                 EnableControl(sender);
-            })
-            { IsBackground = true }
-            .Start();
+            });
         }
 
         /// <summary>
@@ -557,7 +560,51 @@ namespace HostsManageTool.Nirvana
         {
             _db.Dispose();
             Environment.Exit(0);
+        }
 
+        private void btn_importHostsFile_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows),
+                    @"system32\drivers\etc\")
+            };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var hosts = _db.Hosts.ToList();
+                var lines = File.ReadAllLines(dialog.FileName)
+                    .Select(d => d.Trim())
+                    .Where(d => !d.StartsWith("#"))
+                    .Select(d => d.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries))
+                    .Where(d => d.Length == 2);
+                foreach (var line in lines)
+                {
+                    var ipStr = line[0];
+                    var hostStr = line[1];
+                    if (!ipStr.IsIpAddress()) continue;
+                    var host = hosts.FirstOrDefault(d => d.HostName == hostStr);
+                    if (host != null)
+                    {
+                        host.Ips.Clear();
+                        host.Ips.Add(new Ip(ipStr));
+                    }
+                    else
+                    {
+                        host = new Host(hostStr);
+                        host.Ips.Add(new Ip(ipStr));
+                        _db.Hosts.Add(host);
+                    }
+
+                    _db.SaveChanges();
+                }
+            }
+
+            EnableControl(sender);
+        }
+
+        private void btn_reload_Click(object sender, EventArgs e)
+        {
+            LoadAllData();
         }
     }
 }

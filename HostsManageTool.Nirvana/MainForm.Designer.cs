@@ -38,6 +38,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.chkAutoApply = new System.Windows.Forms.CheckBox();
+            this.btn_importHostsFile = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.txtLog = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
             this.btnApplyToHosts = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.btnDirect = new HostsManageTool.Nirvana.UserControl.ButtonEx();
@@ -50,7 +52,7 @@
             this.btnAddHostName = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.txtIpFilter = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
             this.txtHostNameFilter = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
-            this.chkAutoApply = new System.Windows.Forms.CheckBox();
+            this.btn_reload = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.SuspendLayout();
             // 
             // lstHostName
@@ -130,6 +132,28 @@
             this.label8.TabIndex = 3;
             this.label8.Text = "在列表中：Delete键删除";
             // 
+            // chkAutoApply
+            // 
+            this.chkAutoApply.AutoSize = true;
+            this.chkAutoApply.Checked = true;
+            this.chkAutoApply.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoApply.Location = new System.Drawing.Point(274, 33);
+            this.chkAutoApply.Name = "chkAutoApply";
+            this.chkAutoApply.Size = new System.Drawing.Size(198, 16);
+            this.chkAutoApply.TabIndex = 17;
+            this.chkAutoApply.Text = "更改指向时自动应用到Hosts文件";
+            this.chkAutoApply.UseVisualStyleBackColor = true;
+            // 
+            // btn_importHostsFile
+            // 
+            this.btn_importHostsFile.Location = new System.Drawing.Point(690, 37);
+            this.btn_importHostsFile.Name = "btn_importHostsFile";
+            this.btn_importHostsFile.Size = new System.Drawing.Size(75, 23);
+            this.btn_importHostsFile.TabIndex = 18;
+            this.btn_importHostsFile.Text = "导入hosts文件";
+            this.btn_importHostsFile.UseVisualStyleBackColor = true;
+            this.btn_importHostsFile.Click += new System.EventHandler(this.btn_importHostsFile_Click);
+            // 
             // txtLog
             // 
             this.txtLog.Location = new System.Drawing.Point(495, 321);
@@ -147,7 +171,7 @@
             this.btnApplyToHosts.Name = "btnApplyToHosts";
             this.btnApplyToHosts.Size = new System.Drawing.Size(270, 47);
             this.btnApplyToHosts.TabIndex = 15;
-            this.btnApplyToHosts.Text = "应用到Hosts文件(重新下载远程配置)";
+            this.btnApplyToHosts.Text = "应用到Hosts文件";
             this.btnApplyToHosts.UseVisualStyleBackColor = true;
             this.btnApplyToHosts.Click += new System.EventHandler(this.btnApplyToHosts_Click);
             // 
@@ -249,23 +273,23 @@
             this.txtHostNameFilter.TextChanged += new System.EventHandler(this.txtHostNameFilter_TextChanged);
             this.txtHostNameFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHostNameFilter_KeyDown);
             // 
-            // chkAutoApply
+            // btn_reload
             // 
-            this.chkAutoApply.AutoSize = true;
-            this.chkAutoApply.Checked = true;
-            this.chkAutoApply.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoApply.Location = new System.Drawing.Point(274, 33);
-            this.chkAutoApply.Name = "chkAutoApply";
-            this.chkAutoApply.Size = new System.Drawing.Size(198, 16);
-            this.chkAutoApply.TabIndex = 17;
-            this.chkAutoApply.Text = "更改指向时自动应用到Hosts文件";
-            this.chkAutoApply.UseVisualStyleBackColor = true;
+            this.btn_reload.Location = new System.Drawing.Point(690, 66);
+            this.btn_reload.Name = "btn_reload";
+            this.btn_reload.Size = new System.Drawing.Size(75, 23);
+            this.btn_reload.TabIndex = 18;
+            this.btn_reload.Text = "重新载入";
+            this.btn_reload.UseVisualStyleBackColor = true;
+            this.btn_reload.Click += new System.EventHandler(this.btn_reload_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 480);
+            this.Controls.Add(this.btn_reload);
+            this.Controls.Add(this.btn_importHostsFile);
             this.Controls.Add(this.chkAutoApply);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.btnApplyToHosts);
@@ -323,6 +347,8 @@
         private UserControl.ButtonEx btnApplyToHosts;
         private HostsManageTool.Nirvana.UserControl.TextBoxEx txtLog;
         private System.Windows.Forms.CheckBox chkAutoApply;
+        private UserControl.ButtonEx btn_importHostsFile;
+        private UserControl.ButtonEx btn_reload;
     }
 }
 
