@@ -13,6 +13,17 @@ namespace HostsManageTool.Nirvana.Models
     /// </summary>
     public class Host
     {
+        /// <inheritdoc />
+        public Host()
+        {
+        }
+
+        /// <inheritdoc />
+        public Host(string hostName)
+        {
+            HostName = hostName;
+        }
+
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string HostName { get; set; }

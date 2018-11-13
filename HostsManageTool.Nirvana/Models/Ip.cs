@@ -12,6 +12,17 @@ namespace HostsManageTool.Nirvana.Models
     /// </summary>
     public class Ip
     {
+        /// <inheritdoc />
+        public Ip()
+        {
+        }
+
+        /// <inheritdoc />
+        public Ip(string ipAddress)
+        {
+            IpAddress = ipAddress;
+        }
+
         [Key]
         public string IpAddress { get; set; }
         public virtual ICollection<Host> Hosts { get; set; }
