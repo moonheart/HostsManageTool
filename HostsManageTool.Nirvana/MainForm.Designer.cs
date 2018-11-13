@@ -39,6 +39,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.chkAutoApply = new System.Windows.Forms.CheckBox();
+            this.btn_reload = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.btn_importHostsFile = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.txtLog = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
             this.btnApplyToHosts = new HostsManageTool.Nirvana.UserControl.ButtonEx();
@@ -52,7 +53,6 @@
             this.btnAddHostName = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.txtIpFilter = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
             this.txtHostNameFilter = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
-            this.btn_reload = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.SuspendLayout();
             // 
             // lstHostName
@@ -143,6 +143,16 @@
             this.chkAutoApply.TabIndex = 17;
             this.chkAutoApply.Text = "更改指向时自动应用到Hosts文件";
             this.chkAutoApply.UseVisualStyleBackColor = true;
+            // 
+            // btn_reload
+            // 
+            this.btn_reload.Location = new System.Drawing.Point(690, 66);
+            this.btn_reload.Name = "btn_reload";
+            this.btn_reload.Size = new System.Drawing.Size(75, 23);
+            this.btn_reload.TabIndex = 18;
+            this.btn_reload.Text = "重新载入";
+            this.btn_reload.UseVisualStyleBackColor = true;
+            this.btn_reload.Click += new System.EventHandler(this.btn_reload_Click);
             // 
             // btn_importHostsFile
             // 
@@ -272,16 +282,6 @@
             this.txtHostNameFilter.TabIndex = 2;
             this.txtHostNameFilter.TextChanged += new System.EventHandler(this.txtHostNameFilter_TextChanged);
             this.txtHostNameFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHostNameFilter_KeyDown);
-            // 
-            // btn_reload
-            // 
-            this.btn_reload.Location = new System.Drawing.Point(690, 66);
-            this.btn_reload.Name = "btn_reload";
-            this.btn_reload.Size = new System.Drawing.Size(75, 23);
-            this.btn_reload.TabIndex = 18;
-            this.btn_reload.Text = "重新载入";
-            this.btn_reload.UseVisualStyleBackColor = true;
-            this.btn_reload.Click += new System.EventHandler(this.btn_reload_Click);
             // 
             // MainForm
             // 
