@@ -146,7 +146,7 @@
             // 
             // btn_reload
             // 
-            this.btn_reload.Location = new System.Drawing.Point(690, 66);
+            this.btn_reload.Location = new System.Drawing.Point(612, 29);
             this.btn_reload.Name = "btn_reload";
             this.btn_reload.Size = new System.Drawing.Size(75, 23);
             this.btn_reload.TabIndex = 18;
@@ -156,9 +156,9 @@
             // 
             // btn_importHostsFile
             // 
-            this.btn_importHostsFile.Location = new System.Drawing.Point(690, 37);
+            this.btn_importHostsFile.Location = new System.Drawing.Point(495, 29);
             this.btn_importHostsFile.Name = "btn_importHostsFile";
-            this.btn_importHostsFile.Size = new System.Drawing.Size(75, 23);
+            this.btn_importHostsFile.Size = new System.Drawing.Size(99, 23);
             this.btn_importHostsFile.TabIndex = 18;
             this.btn_importHostsFile.Text = "导入hosts文件";
             this.btn_importHostsFile.UseVisualStyleBackColor = true;
@@ -166,18 +166,18 @@
             // 
             // txtLog
             // 
-            this.txtLog.Location = new System.Drawing.Point(495, 321);
+            this.txtLog.Location = new System.Drawing.Point(495, 115);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(270, 127);
+            this.txtLog.Size = new System.Drawing.Size(270, 333);
             this.txtLog.TabIndex = 16;
             // 
             // btnApplyToHosts
             // 
             this.btnApplyToHosts.Font = new System.Drawing.Font("宋体", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnApplyToHosts.Location = new System.Drawing.Point(495, 215);
+            this.btnApplyToHosts.Location = new System.Drawing.Point(495, 62);
             this.btnApplyToHosts.Name = "btnApplyToHosts";
             this.btnApplyToHosts.Size = new System.Drawing.Size(270, 47);
             this.btnApplyToHosts.TabIndex = 15;
