@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,8 +22,8 @@ namespace HostsManageTool.Nirvana
             InitializeComponent();
         }
 
-        private List<Host> _hosts;
-        private List<Ip> _ips;
+        //private List<Host> _hosts;
+        //private List<Ip> _ips;
 
         /// <summary>
         /// 加载初始数据
@@ -30,17 +32,7 @@ namespace HostsManageTool.Nirvana
         /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            try
-            {
-                LoadHostData();
-                LoadHostIpData();
-            }
-            catch (Exception ex)
-            {
-                Message(ex.Message);
-                Message(ex.StackTrace);
-                Application.Exit();
-            }
+            LoadAllData();
         }
 
         #region 列表加载
@@ -57,8 +49,8 @@ namespace HostsManageTool.Nirvana
         /// <param name="select">要选中的项Id</param>
         private void LoadHostData(string select = null)
         {
-            var list = _hosts = _db.Hosts.ToList();
-            SetHostBinding(list);
+            if (select == null) select = lstHostName.SelectedValue as string;
+            SetHostBinding(_db.Hosts.ToList());
             if (select != null)
                 lstHostName.SelectedValue = select;
         }
@@ -69,8 +61,8 @@ namespace HostsManageTool.Nirvana
         /// </summary>
         private void LoadHostIpData(string select = null)
         {
-            var list = _ips = _db.Ips.ToList();
-            SetIpBinding(list);
+            if (select == null) select = lstIp.SelectedValue as string;
+            SetIpBinding(_db.Ips.ToList());
             if (select != null)
                 lstIp.SelectedValue = select;
         }
@@ -80,21 +72,21 @@ namespace HostsManageTool.Nirvana
         #region 列表绑定
 
         /// 设置主机名列表绑定
-        private void SetHostBinding(List<Host> list)
+        private void SetHostBinding(IList<Host> list)
         {
             lstHostName.DataSource = null;
             lstHostName.ResetBindings();
-            lstHostName.DataSource = list;
+            lstHostName.DataSource = list.OrderBy(d => d.HostName).ToList();
             lstHostName.DisplayMember = nameof(Host.HostName);
             lstHostName.ValueMember = nameof(Host.HostName);
         }
 
         /// Ip列表
-        private void SetIpBinding(List<Ip> list)
+        private void SetIpBinding(IList<Ip> list)
         {
             lstIp.DataSource = null;
             lstIp.ResetBindings();
-            lstIp.DataSource = list;
+            lstIp.DataSource = list.OrderBy(d => d.IpAddress).ToList();
             lstIp.DisplayMember = nameof(Ip.IpAddress);
             lstIp.ValueMember = nameof(Ip.IpAddress);
         }
@@ -150,7 +142,7 @@ namespace HostsManageTool.Nirvana
                 switch (e.KeyCode)
                 {
                     case Keys.Delete:
-                        btnDeleteHostName_Click(null, null);
+                        btnDeleteHostName_Click();
                         e.Handled = true;
                         break;
 
@@ -170,7 +162,7 @@ namespace HostsManageTool.Nirvana
                 switch (e.KeyCode)
                 {
                     case Keys.Enter:
-                        btnAddHostName_Click(null, null);
+                        btnAddHostName_Click();
                         e.Handled = true;
                         break;
 
@@ -184,26 +176,16 @@ namespace HostsManageTool.Nirvana
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnAddHostName_Click(object sender, EventArgs e)
+        private void btnAddHostName_Click(object sender = null, EventArgs e = null)
         {
             var name = txtHostNameFilter.Text.Trim();
             if (!name.IsNullOrWhiteSpace())
             {
-                var host = new Host { HostName = name };
-
-                try
-                {
-                    _db.Hosts.Add(host);
-                    _db.SaveChanges();
-                    _db.Dispose();
-                    _db = new DataContext();
-                    //_db.Hosts.Attach(host);
-                    LoadHostData(name);
-                }
-                catch (Exception ex)
-                {
-                    Message(ex.Message);
-                }
+                var host = _db.Hosts.Create<Host>();
+                host.HostName = name;
+                _db.Hosts.Add(host);
+                _db.SaveChanges();
+                LoadHostData(name);
                 txtHostNameFilter.Focus();
                 txtHostNameFilter.SelectAll();
 
@@ -229,7 +211,7 @@ namespace HostsManageTool.Nirvana
 
             //host = _db.Hosts.Attach(host);
 
-            var ip = host.Ips?.FirstOrDefault();
+            var ip = host.TargetIp;
             txtCurrent.Text = ip != null ? ip.IpAddress : "";
         }
 
@@ -255,11 +237,11 @@ namespace HostsManageTool.Nirvana
             var txt = txtHostNameFilter.Text.Trim();
 
             var filterd = txt.IsNullOrWhiteSpace()
-                ? _hosts
-                : _hosts.Where(d => d.HostName.Contains(txt)).ToList();
-            SetHostBinding(filterd);
+                ? _db.Hosts
+                : _db.Hosts.Where(d => d.HostName.Contains(txt));
+            SetHostBinding(filterd.ToList());
 
-            lstHostName.SelectedIndex = filterd.Count > 0 ? 0 : -1;
+            lstHostName.SelectedIndex = filterd.Any() ? 0 : -1;
         }
 
         /// <summary>
@@ -267,7 +249,7 @@ namespace HostsManageTool.Nirvana
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnDeleteHostName_Click(object sender, EventArgs e)
+        private void btnDeleteHostName_Click(object sender = null, EventArgs e = null)
         {
             var host = lstHostName.SelectedItem as Host;
             if (host != null)
@@ -294,14 +276,15 @@ namespace HostsManageTool.Nirvana
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnAddIp_Click(object sender, EventArgs e)
+        private void btnAddIp_Click(object sender = null, EventArgs e = null)
         {
             var address = txtIpFilter.Text.Trim();
             if (!address.IsNullOrWhiteSpace())
             {
                 if (address.IsIpAddress())
                 {
-                    var ip = new Ip() { IpAddress = address };
+                    var ip = _db.Ips.Create<Ip>();
+                    ip.IpAddress = address;
                     var host = lstHostName.SelectedItem as Host;
                     if (host == null)
                     {
@@ -310,13 +293,11 @@ namespace HostsManageTool.Nirvana
                     }
                     else
                     {
-                        host = _db.Hosts.Attach(host);
-                        host.Ips.Clear();
-                        host.Ips.Add(ip);
+                        host.TargetIp = ip;
                         _db.SaveChanges();
                     }
                     LoadAllData();
-                    btnApplyToHosts_Click(null, null);
+                    btnApplyToHosts_Click();
                 }
                 else
                 {
@@ -365,12 +346,11 @@ namespace HostsManageTool.Nirvana
                 }
                 else
                 {
-                    host.Ips.Clear();
-                    host.Ips.Add(ip);
+                    host.TargetIp = ip;
                     _db.SaveChanges();
                     LoadAllData();
                     if (chkAutoApply.Checked)
-                        btnApplyToHosts_Click(null, null);
+                        btnApplyToHosts_Click();
                 }
             }
             else
@@ -379,11 +359,11 @@ namespace HostsManageTool.Nirvana
                 var host = lstHostName.SelectedItem as Host;
                 if (host != null)
                 {
-                    host.Ips.Clear();
+                    host.TargetIp = null;
                     _db.SaveChanges();
                     LoadAllData();
                     if (chkAutoApply.Checked)
-                        btnApplyToHosts_Click(null, null);
+                        btnApplyToHosts_Click();
                 }
                 else
                 {
@@ -398,7 +378,7 @@ namespace HostsManageTool.Nirvana
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnDeleteIp_Click(object sender, EventArgs e)
+        private void btnDeleteIp_Click(object sender = null, EventArgs e = null)
         {
             var ip = lstIp.SelectedItem as Ip;
             if (ip != null)
@@ -408,16 +388,10 @@ namespace HostsManageTool.Nirvana
                     MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Question) == DialogResult.OK)
                 {
-                    try
-                    {
-                        _db.Ips.Remove(ip);
-                        _db.SaveChanges();
-                        LoadAllData();
-                    }
-                    catch
-                    {
-                        Message("要删除的对象不存在");
-                    }
+                    _db.Ips.Remove(ip);
+                    _db.SaveChanges();
+                    btnApplyToHosts_Click();
+                    LoadAllData();
                 }
             }
             EnableControl(sender);
@@ -433,11 +407,11 @@ namespace HostsManageTool.Nirvana
             var txt = txtIpFilter.Text.Trim();
 
             var filterd = txt.IsNullOrWhiteSpace()
-                ? _ips
-                : _ips.Where(d => d.IpAddress.Contains(txt)).ToList();
-            SetIpBinding(filterd);
+                ? _db.Ips
+                : _db.Ips.Where(d => d.IpAddress.Contains(txt));
+            SetIpBinding(filterd.ToList());
 
-            lstIp.SelectedIndex = filterd.Count > 0 ? 0 : -1;
+            lstIp.SelectedIndex = filterd.Any() ? 0 : -1;
         }
 
         /// <summary>
@@ -465,7 +439,7 @@ namespace HostsManageTool.Nirvana
                 switch (e.KeyCode)
                 {
                     case Keys.Delete:
-                        btnDeleteIp_Click(null, null);
+                        btnDeleteIp_Click();
                         e.Handled = true;
                         break;
 
@@ -485,10 +459,9 @@ namespace HostsManageTool.Nirvana
                 switch (e.KeyCode)
                 {
                     case Keys.Enter:
-                        btnAddIp_Click(null, null);
+                        btnAddIp_Click();
                         e.Handled = true;
                         break;
-
                 }
             }
         }
@@ -515,27 +488,22 @@ namespace HostsManageTool.Nirvana
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnApplyToHosts_Click(object sender, EventArgs e)
+        private void btnApplyToHosts_Click(object sender = null, EventArgs e = null)
         {
-            Task.Run(() =>
-            {
-                var windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-                var hostsFile = Path.Combine(windows, @"system32\drivers\etc\hosts");
-                if (File.Exists(hostsFile))
-                {
-                    File.Delete(hostsFile);
-                }
+            var windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            var hostsFile = Path.Combine(windows, @"system32\drivers\etc\hosts2");
 
-                var lines = _hosts.Where(d => d.Ips.Any())
-                    .Select(d => $"{d.Ips.First().IpAddress}\t{d.HostName}");
+            var hosts = _db.Hosts.ToList();
+            var lines = hosts.Where(d => d.TargetIp != null)
+                .Select(d => $"{d.TargetIp.IpAddress}\t{d.HostName}");
 
-                LblApplyMsgMessage("创建新的Hosts文件...");
-                //File.WriteAllLines(hostsFile, lines);
+            LblApplyMsgMessage("写入Hosts文件...");
+            File.WriteAllLines(hostsFile, lines);
 
-                LblApplyMsgMessage("完成...");
+            LblApplyMsgMessage("完成...");
 
-                EnableControl(sender);
-            });
+            EnableControl(sender);
+
         }
 
         /// <summary>
@@ -559,9 +527,14 @@ namespace HostsManageTool.Nirvana
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _db.Dispose();
-            Environment.Exit(0);
+            //Environment.Exit(0);
         }
 
+        /// <summary>
+        /// 导入hosts文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_importHostsFile_Click(object sender, EventArgs e)
         {
             var dialog = new OpenFileDialog()
@@ -571,32 +544,42 @@ namespace HostsManageTool.Nirvana
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var hosts = _db.Hosts.ToList();
                 var lines = File.ReadAllLines(dialog.FileName)
                     .Select(d => d.Trim())
                     .Where(d => !d.StartsWith("#"))
                     .Select(d => d.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries))
                     .Where(d => d.Length == 2);
+                var hosts = _db.Hosts.ToList();
+                var ips = _db.Ips.ToList();
                 foreach (var line in lines)
                 {
                     var ipStr = line[0];
                     var hostStr = line[1];
                     if (!ipStr.IsIpAddress()) continue;
                     var host = hosts.FirstOrDefault(d => d.HostName == hostStr);
+                    var ip = ips.FirstOrDefault(d => d.IpAddress == ipStr);
+                    if (ip == null)
+                    {
+                        ip = _db.Ips.Create();
+                        ip.IpAddress = ipStr;
+                        ips.Add(ip);
+                    }
+
                     if (host != null)
                     {
-                        host.Ips.Clear();
-                        host.Ips.Add(new Ip(ipStr));
+                        host.TargetIp = ip;
                     }
                     else
                     {
-                        host = new Host(hostStr);
-                        host.Ips.Add(new Ip(ipStr));
+                        host = _db.Hosts.Create();
+                        host.HostName = hostStr;
+                        host.TargetIp = ip;
                         _db.Hosts.Add(host);
+                        hosts.Add(host);
                     }
-
-                    _db.SaveChanges();
                 }
+                _db.SaveChanges();
+                LoadAllData();
             }
 
             EnableControl(sender);
@@ -605,6 +588,7 @@ namespace HostsManageTool.Nirvana
         private void btn_reload_Click(object sender, EventArgs e)
         {
             LoadAllData();
+            EnableControl(sender);
         }
     }
 }
