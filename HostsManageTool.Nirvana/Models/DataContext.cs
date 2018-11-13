@@ -14,7 +14,14 @@ namespace HostsManageTool.Nirvana.Models
         {
             this.Database.Log = s =>
             {
-                File.AppendAllText("database.log", s);
+                try
+                {
+                    File.AppendAllText("database.log", s);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             };
         }
 
