@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -499,6 +500,12 @@ namespace HostsManageTool.Nirvana
 
             LblApplyMsgMessage("写入Hosts文件...");
             File.WriteAllLines(hostsFile, lines);
+
+            LblApplyMsgMessage("刷新dns缓存...");
+            var startInfo = new ProcessStartInfo("ipconfig", " /flushdns");
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            Process.Start(startInfo);
 
             LblApplyMsgMessage("完成...");
 
