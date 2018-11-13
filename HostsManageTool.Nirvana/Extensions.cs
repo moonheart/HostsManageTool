@@ -39,8 +39,7 @@ namespace HostsManageTool.Nirvana
         /// <returns></returns>
         public static bool IsIpAddress(this string ip)
         {
-            return Regex.IsMatch(ip,
-                @"((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))");
+            return IPAddress.TryParse(ip, out _);
         }
 
         /// <summary>
