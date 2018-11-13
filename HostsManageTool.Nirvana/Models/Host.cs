@@ -28,7 +28,7 @@ namespace HostsManageTool.Nirvana.Models
         //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string HostName { get; set; }
 
-        public virtual ICollection<Ip> Ips { get; set; }
+        public virtual Ip TargetIp { get; set; }
     }
 
 }
