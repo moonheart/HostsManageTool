@@ -492,7 +492,7 @@ namespace HostsManageTool.Nirvana
         private void btnApplyToHosts_Click(object sender = null, EventArgs e = null)
         {
             var windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-            var hostsFile = Path.Combine(windows, @"system32\drivers\etc\hosts2");
+            var hostsFile = Path.Combine(windows, @"system32\drivers\etc\hosts");
 
             var hosts = _db.Hosts.ToList();
             var lines = hosts.Where(d => d.TargetIp != null)
