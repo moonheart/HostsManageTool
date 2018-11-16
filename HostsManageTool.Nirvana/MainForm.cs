@@ -526,6 +526,10 @@ namespace HostsManageTool.Nirvana
                     txtLog.AppendText(msg + "\r\n");
                 }));
             }
+            else
+            {
+                txtLog.AppendText(msg + "\r\n");
+            }
         }
 
 
@@ -594,6 +598,15 @@ namespace HostsManageTool.Nirvana
 
         private void btn_reload_Click(object sender, EventArgs e)
         {
+            LoadAllData();
+            EnableControl(sender);
+        }
+
+        private void btn_clear_Click(object sender, EventArgs e)
+        {
+            _db.Ips.RemoveRange(_db.Ips);
+            _db.Hosts.RemoveRange(_db.Hosts);
+            _db.SaveChanges();
             LoadAllData();
             EnableControl(sender);
         }

@@ -53,6 +53,7 @@
             this.btnAddHostName = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.txtIpFilter = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
             this.txtHostNameFilter = new HostsManageTool.Nirvana.UserControl.TextBoxEx();
+            this.btn_clear = new HostsManageTool.Nirvana.UserControl.ButtonEx();
             this.SuspendLayout();
             // 
             // lstHostName
@@ -146,7 +147,7 @@
             // 
             // btn_reload
             // 
-            this.btn_reload.Location = new System.Drawing.Point(612, 29);
+            this.btn_reload.Location = new System.Drawing.Point(600, 29);
             this.btn_reload.Name = "btn_reload";
             this.btn_reload.Size = new System.Drawing.Size(75, 23);
             this.btn_reload.TabIndex = 18;
@@ -283,11 +284,22 @@
             this.txtHostNameFilter.TextChanged += new System.EventHandler(this.txtHostNameFilter_TextChanged);
             this.txtHostNameFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHostNameFilter_KeyDown);
             // 
+            // btn_clear
+            // 
+            this.btn_clear.Location = new System.Drawing.Point(681, 29);
+            this.btn_clear.Name = "btn_clear";
+            this.btn_clear.Size = new System.Drawing.Size(75, 23);
+            this.btn_clear.TabIndex = 18;
+            this.btn_clear.Text = "清空数据";
+            this.btn_clear.UseVisualStyleBackColor = true;
+            this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 480);
+            this.Controls.Add(this.btn_clear);
             this.Controls.Add(this.btn_reload);
             this.Controls.Add(this.btn_importHostsFile);
             this.Controls.Add(this.chkAutoApply);
@@ -349,6 +361,7 @@
         private System.Windows.Forms.CheckBox chkAutoApply;
         private UserControl.ButtonEx btn_importHostsFile;
         private UserControl.ButtonEx btn_reload;
+        private UserControl.ButtonEx btn_clear;
     }
 }
 
